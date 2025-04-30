@@ -328,9 +328,65 @@ public static function runSpecificTransactions($data){
   }
 
 
+public static function rollbackTransactions($id)
+{
+
+      $success_count = 0;  $failure_count = 0;
+	  //echo $success_count;
+	  //echo Transaction->all
+	  $payload = array(); //rollback emails till 7th of feb 2023
+      $pendingTransactions = Transaction::where('id', '>', $id)->limit(5000);
+    //   dd($pendingTransactions->count());
+	  //echo $pendingTransactions->count(); exit;
+      if($pendingTransactions->count() > 0){
+          foreach($pendingTransactions->get() as $pendingTransaction){
+            //$pendingTransaction->quantity  = 1;
+            //dd($pendingTransaction);
+            $membership_id_resolved = parent::resolveMemberReference($pendingTransaction->member_reference) ?? '8731110';
+            //dd($membership_id_resolved);
+              $arrayToPush = array(
+                'Company_username'=>self::$username,
+                'Company_password'=>parent::passwordReturn(),
+                'Membership_ID'=>$membership_id_resolved ?? '8711130',
+                'Transaction_Date'=>$pendingTransaction->transaction_date,
+                'Transaction_Type_code'=>$pendingTransaction->transaction_type,
+                'Transaction_channel_code'=>$pendingTransaction->channel,
+                'Transaction_amount'=>$pendingTransaction->amount,
+                'Branch_code'=>$pendingTransaction->branch_code,
+                'Transaction_ID'=>$pendingTransaction->transaction_reference,
+                'Product_Code' =>$pendingTransaction->product_code,
+                'Product_Quantity' =>$pendingTransaction->quantity,
+                'API_flag' => 'stran',
+                'id'=>$pendingTransaction->id
+                );
+                // $pendingTransaction->update(['status' => 4]);
+				array_push($payload, $arrayToPush);
+		  }
 
 
-public static function rollbackTransactions($id){
+                $resp =
+                // parent::pushToPERX("https://staging-env.perxclm.com/stage-data.php", $payload, parent::$headerPayload);
+                //parent::pushToPERX("https://firstbankloyalty.perxclm.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
+                //parent::pushToPERX("https://demo.firstrewards.loyaltysolutionsnigeria.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
+                parent::pushToPERX("https://demo.firstrewards.perxclm4.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
+				// print_r($resp);
+				//dd($resp);
+                return response()->json($resp);
+
+        }else{
+
+            return response()->json([
+                "message" => "There are no staging data currently",
+                "status" => false
+                //"status" => "Not Working"
+            ]);
+        }
+
+}
+
+
+public static function rollbackTransactions_old($id)
+{
 
       $success_count = 0;  $failure_count = 0;
 	  //echo $success_count;

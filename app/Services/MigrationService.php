@@ -1,27 +1,27 @@
-<?php 
+<?php
 
 namespace App\Services;
 use App\Models\Enrollment;
 class MigrationService {
     public static $key = '!QAZXSW@#EDCVFR$';
     public static $iv = '5666685225155700';
-    protected static $program = "Fidelity Green Rewards Programme"; 
+    protected static $program = "Fidelity Green Rewards Programme";
     protected static $placeholders = array('$memberID', '$first_name', '$last_name', '$pin', '$points', '$email', '$program');
-    protected static $link = "https://loyalty.fidelitybank.ng/login.php";
-    
-    
+    protected static $link = "https://fbnportal.perxclm5.com/login.php";
+
+
     protected static $headerPayload = array(
         //'Content-Type: application/json',
     );
-    protected static $url = "https://greenrewards.perxclm.com/api/v1/index.php";
+    protected static $url = "https://fbn.perxclm5.com/api/v1/index.php";
 
     public function __construct()
     {
-        
+
     }
-    protected static function pushToPERX($url="https://greenrewards.perxclm.com/api/v1/index.php", $postFields, $payload)
+    protected static function pushToPERX($url="https://fbn.perxclm5.com/api/v1/index.php", $postFields, $payload)
     {
-        
+
         $curl= curl_init();
         $ch = $curl;
         $timeout = 0; // Set 0 for no timeout.
@@ -33,7 +33,7 @@ class MigrationService {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
         $result = curl_exec($ch);
-        
+
 if (curl_errno($ch)) {
     $error_msg = curl_error($ch). "^^";
 }else{
@@ -41,7 +41,7 @@ if (curl_errno($ch)) {
 }
 
         curl_close($ch);
-        
+
         return $result;
     }
     public static function string_encrypt($string, $key, $iv) : string{
@@ -59,20 +59,20 @@ if (curl_errno($ch)) {
         $decryption_iv = '1234567891011121';
         $key = "SmoothJay";
         $options = 0;
-        $decryption=openssl_decrypt($encryption, $ciphering, 
+        $decryption=openssl_decrypt($encryption, $ciphering,
         $key, $options, $iv);
         return $decryption;
     }
-    
+
 public static function passwordReturn(){
     return self::string_encrypt('Di@mond10$#', self::$key,self::$iv);
 }
    // self::$password = parent::string_encrypt('Di@mond10$#', self::$key,self::$iv);
-    
 
 
-public static function resolveMemberReference($member_reference){
-    $loyalty_number = Enrollment::where('member_reference', $member_reference)->select('loyalty_number')->first();
+
+public static function resolveMemberReference($cif_id){
+    $loyalty_number = Enrollment::where('cif_id', $cif_id)->select('loyalty_number')->first();
     return $loyalty_number ? $loyalty_number->loyalty_number:null;
 }
 
