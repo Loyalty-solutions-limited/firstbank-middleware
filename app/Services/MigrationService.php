@@ -13,13 +13,14 @@ class MigrationService {
     protected static $headerPayload = array(
         //'Content-Type: application/json',
     );
-    protected static $url = "https://fbn.perxclm5.com/api/v1/index.php";
+    protected static $url = "https://172.28.65.0/api/v1/index.php";
+    // protected static $url = "https://fbn.perxclm5.com/api/v1/index.php";
 
     public function __construct()
     {
 
     }
-    protected static function pushToPERX($url="https://fbn.perxclm5.com/api/v1/index.php", $postFields, $payload)
+    protected static function pushToPERX($url="https://172.28.65.0/api/v1/index.php", $postFields, $payload)
     {
 
         $curl= curl_init();

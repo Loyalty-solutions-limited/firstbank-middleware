@@ -38,7 +38,7 @@ class processTransaction extends Command
      */
     public function handle()
     {
-        $url = "http://127.0.0.1/transaction";
+        $url = "https://172.16.26.8";
 
         return Log::info(self::make_curl($url . "/transaction"));
     }
