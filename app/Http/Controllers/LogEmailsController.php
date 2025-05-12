@@ -24,7 +24,7 @@ class LogEmailsController extends Controller
                     $data = array("sender"=>"noreply@firstbank", "from"=> "noreply@firstbank.ng","to"=>$get_email->email, "subject"=>$get_email->subject, "body"=> $get_email->body);
                     $url = env('EMAIL_SERVICE_URL');
                     $response = CurlService::doCURL($url, $data);
-                    echo json_encode($response);exit;
+                    echo json_encode($response);
                     if($response['response'] == 1){
                         $update_status = LogEmails::where('id',$data->id)->update(['status' => 1]);
                         echo "Email Sent Successfullt";
@@ -38,6 +38,21 @@ class LogEmailsController extends Controller
         }else{
                 echo "No Pending Emails";
         }
+    }
+
+    public function sendMail(LogEmailsRequest $request)
+    {
+        $data = array("sender"=>"noreply@firstbank", "from"=> "noreply@firstbank.ng","to"=>$request->email, "subject"=>$request->subject, "body"=> $request->body);
+        $url = env('EMAIL_SERVICE_URL');
+        $response = CurlService::doCURL($url, $data);
+        echo json_encode($response);
+            if($response['response'] == 1){
+                // $update_status = LogEmails::where('id',$data->id)->update(['status' => 1]);
+            $insert_log = LogEmails::create(array_merge($request->all(), ['status' => 1]));
+                echo "Email Sent Successfullt";
+            }else{
+                echo "Email failed to send";
+            }
     }
 
 
@@ -64,7 +79,7 @@ class LogEmailsController extends Controller
                             echo "Email Sent Successfully";
                         }
                     } catch (\Exception $e) {
-                        echo "An error Occurred";
+                        echo "Failed to send. An error Occurred";
                     }
                 }else{
                     echo "Membership ID $get_email->membership_id does not have an email address";

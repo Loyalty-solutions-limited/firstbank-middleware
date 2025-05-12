@@ -29,7 +29,7 @@ class LogEmailsRequest extends FormRequest
             'email_type'=> 'required',// could be Transaction or Enrollment,
             'subject' => 'required',
             'body' => 'required',
-            'trans_ref' => 'required_if:email_type,enrollment',
+            'trans_ref' => 'required_if:email_type,transaction',
             'email' => 'required',
         ];
     }
