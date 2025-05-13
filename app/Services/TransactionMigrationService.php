@@ -368,7 +368,7 @@ public static function rollbackTransactions($id)
                 // parent::pushToPERX("https://staging-env.perxclm.com/stage-data.php", $payload, parent::$headerPayload);
                 //parent::pushToPERX("https://firstbankloyalty.perxclm.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
                 //parent::pushToPERX("https://demo.firstrewards.loyaltysolutionsnigeria.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
-                parent::pushToPERX("https://demo.firstrewards.perxclm4.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
+                parent::pushToPERX("https://172.28.65.0/stage_data/stage_data.php", $payload, parent::$headerPayload);
 				// print_r($resp);
 				//dd($resp);
                 return response()->json($resp);
