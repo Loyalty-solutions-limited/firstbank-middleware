@@ -12,7 +12,8 @@ class Enrollment extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table ="enrollments";
+    protected $table ="LOYAL_ENROLLMENT";
+    // protected $table ="enrollments";
 
     protected $fillable = [
         'first_name',
@@ -50,7 +51,7 @@ class Enrollment extends Authenticatable
     public function LoyaltyProgram(){
         return $this->belongsTo(LoyaltyProgram::class, 'loyalty_program_id');
     }
-    
+
     public function EmailReportLog(){
         return $this->belongsTo(EmailReportLog::class);
     }

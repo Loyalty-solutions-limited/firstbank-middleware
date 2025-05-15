@@ -9,7 +9,8 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $table ="transactions";
+    protected $table ="QUALIFIED_TRANSACTIONS";
+    // protected $table ="transactions";
 
     protected $guarded = ['id'];
 
@@ -18,5 +19,5 @@ class Transaction extends Model
         return $this->hasMany(Branch::class, 'branch_code', 'branch_code');
     }
 
-    
+
 }

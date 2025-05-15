@@ -5,7 +5,7 @@ use App\Models\Enrollment;
 class MigrationService {
     public static $key = '!QAZXSW@#EDCVFR$';
     public static $iv = '5666685225155700';
-    protected static $program = "Fidelity Green Rewards Programme";
+    protected static $program = "Firstbank Green Rewards Programme";
     protected static $placeholders = array('$memberID', '$first_name', '$last_name', '$pin', '$points', '$email', '$program');
     protected static $link = "https://fbnportal.perxclm5.com/login.php";
 

@@ -720,7 +720,7 @@ class EnrollmentController extends Controller
         ], Response::HTTP_EXPECTATION_FAILED);
 
         $user = Enrollment::where('loyalty_number', $request->loyalty_number)
-                            ->select('email', 'first_name', 'last_name', 'member_reference')
+                            ->select('email', 'first_name', 'last_name', 'cif_id')
                             ->first();
 
         if($user) return response()->json([
@@ -741,7 +741,7 @@ class EnrollmentController extends Controller
             "message" => "Please, provide a member reference",
             "status"  => false
         ], Response::HTTP_EXPECTATION_FAILED);
-        
+
         $user = Enrollment::where('member_reference', $request->member_reference)
                             ->select('email', 'first_name', 'last_name', 'loyalty_number')
                             ->first();

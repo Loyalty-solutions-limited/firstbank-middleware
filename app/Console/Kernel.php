@@ -16,8 +16,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('trigger:enrollment')->everyFifteenMinutes()->runInBackground();
-        $schedule->command('trigger:transaction')->everyFifteenMinutes()->runInBackground();
+        $schedule->command('trigger:enrollment')->everyFiveMinutes()->runInBackground();
+        $schedule->command('trigger:transaction')->everyFiveMinutes()->runInBackground();
+        $schedule->command('trigger:email_log')->everyFiveMinutes()->runInBackground();
     }
 
     /**
