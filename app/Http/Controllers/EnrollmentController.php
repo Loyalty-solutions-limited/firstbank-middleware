@@ -719,7 +719,7 @@ class EnrollmentController extends Controller
             "status" => false
         ], Response::HTTP_EXPECTATION_FAILED);
 
-        $user = Enrollment::where('loyalty_number', $request->loyalty_number)
+        $user = Enrollment::where('cif_id', $request->loyalty_number)
                             ->select('email', 'first_name', 'last_name', 'cif_id')
                             ->first();
 
@@ -733,6 +733,13 @@ class EnrollmentController extends Controller
             "message"   =>  $request->loyalty_number . " does not exists",
             "status"    =>  false,
         ], Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_db()
+    {
+        $data = Enrollment::limit(10)->get();
+
+        return response()->json($data);
     }
 
     public function whoAmI2(Request $request){

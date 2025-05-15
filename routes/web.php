@@ -62,6 +62,7 @@ Route::get('/', function () {
 Route::post('send-mail-v2', [EmailChannelController::class, 'channelMail']); //half done
 Route::resource('runcron2', MigrationController::class); //half done
 Route::get('whoami', [EnrollmentController::class, 'whoAmI']); //done
+Route::get('test_db', [EnrollmentController::class, 'test_db']);
 Route::get('mid', [EnrollmentController::class, 'whoAmI2']); //done
 Route::get('staged-dumped', [NotificationController::class, 'staged_dumped']);
 Route::get('blank-membership', [NotificationController::class, 'blank_membership']);

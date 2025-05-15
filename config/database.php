@@ -91,6 +91,19 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'oracle' => [
+        'driver'         => 'oracle',
+            'tns'            => '',
+            'host'           => env('DB_HOST', 'localhost'),
+            'port'           => env('DB_PORT', '1521'),
+            'database'       => '', // Leave this empty
+            'service_name'   => env('DB_SERVICE_NAME', ''), // Use this instead
+            'username'       => env('DB_USERNAME', ''),
+            'password'       => env('DB_PASSWORD', ''),
+            'charset'        => 'AL32UTF8',
+            'prefix'         => '',
+],
+
     ],
 
     /*
