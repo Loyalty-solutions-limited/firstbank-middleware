@@ -20,13 +20,13 @@ class MigrationController extends Controller
     public function index(Request $request)
     {
 
-        if(!($request->id) || !($request->API_flag))
-        {
-            return response()->json([
-                "message" => "Please, provide an API flag and the last row id",
-                "status" => false
-            ],Response::HTTP_EXPECTATION_FAILED);
-        }
+        // if(!($request->id) || !($request->API_flag))
+        // {
+        //     return response()->json([
+        //         "message" => "Please, provide an API flag and the last row id",
+        //         "status" => false
+        //     ],Response::HTTP_EXPECTATION_FAILED);
+        // }
 
        if ($request->API_flag=='enrol') {
         return EnrolmentMigrationService::migrateEnrolments1();

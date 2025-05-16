@@ -54,9 +54,9 @@ public static function migrateEnrolments1() : string
 
         $success_count = 0;
 
-        $company_details = new CompanyService(env('COMPANY_ID', 3));
+        // $company_details = new CompanyService(env('COMPANY_ID', 3));
 
-        $company_details = $company_details->getCompanyDetails()->get();
+        // $company_details = $company_details->getCompanyDetails()->get();
 
         //dd($company_details);
 
