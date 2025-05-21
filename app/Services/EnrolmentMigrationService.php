@@ -60,7 +60,7 @@ public static function migrateEnrolments1() : string
 
         //dd($company_details);
 
-        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'acid', 'branch_code', 'account_number', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
+        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'acid', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
         //dd($pendingEnrolments->count());
        if ($pendingEnrolments->count()>0)
        {
@@ -76,7 +76,7 @@ public static function migrateEnrolments1() : string
                     'Company_username'=>self::$username,//$company_details->username? $company_details->username: 0,
                     'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
                     'Membership_ID'=>parent::string_encrypt($existingCustomer->cif_id, self::$key,self::$iv),
-                    'Account_number'=>$pendingEnrolment->account_number,
+                    'Account_number'=>$pendingEnrolment->accountnumber,
                     'API_flag'=>'attachAcountNumber',
 
                     );
