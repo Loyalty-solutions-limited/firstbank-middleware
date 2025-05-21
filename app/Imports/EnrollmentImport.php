@@ -21,31 +21,31 @@ class EnrollmentImport implements ToCollection,WithHeadingRow
     */
     public function collection(Collection $rows)
     {
-        $enrollment = new Enrollment();  
+        $enrollment = new Enrollment();
         $records = $rows;
         $data = [];
         $data['payload'] = [];
         $successful_enrollments_count = 0;
         $failed_enrollments_count = 0;
-        
-        
-        $i = 0; 
+
+
+        $i = 0;
         $duplicateCount = 0;
-        foreach ($rows as $row) 
+        foreach ($rows as $row)
         {
             $record = $row;
             $password = time();
             $pin =time();
             $random_email = time(). "@noemail.com";
             $record = $row;
-            
-            
+
+
             $check_if_user_exists = Enrollment::where('member_reference', $row['member_reference'])->count();
              if ($check_if_user_exists == 0){
                 $array = array('first_name'=>$record['first_name'], 'last_name'=>$record['last_name'],
                 'middle_name'=>$record['middle_name'], 'email'=>empty($record['email'])==false ? $record['email'] : $random_email, 'password'=>Hash::make($password),
                 'member_reference'=>$record['member_reference'], 'branch_code'=>$record['branch_code'], 'pin'=>Hash::make($pin),
-                'tier_id'=>1, 'loyalty_program_id'=>1, 'loyalty_number'=>$record['first_name'] . time(),
+                'tier_id'=>1, 'loyalty_program_id'=>1, 'cif_id'=>$record['first_name'] . time(),
                 'cron_id'=>1
             );
             //}
@@ -54,7 +54,7 @@ class EnrollmentImport implements ToCollection,WithHeadingRow
                     $successful_enrollments_count++;
                      array_push($data['payload'], array('data'=>" " . $record['first_name'] ." " .$record['last_name'] . " with ref: " . $record['member_reference'] . " " . empty($record['email'])==false ? $record['email'] : $random_email . " successfully inserted"));
                      $data['success_count'] = $successful_enrollments_count;
-                     $data['failure_count'] = $failed_enrollments_count; 
+                     $data['failure_count'] = $failed_enrollments_count;
                     $LogMail = new EmailReportLog();
                     if(EmailReportLog::where('enrollment_id', $enrol->id)->count()== 0 ){
                         $LogMail->email_body;
@@ -64,11 +64,11 @@ class EnrollmentImport implements ToCollection,WithHeadingRow
                         "status" => 0, 'subject'=>'Enrolment Email');
                         EmailReportLog::create($array2);
                     }
-                    
+
                 }else{
                     $failed_enrollments_count++;
                      array_push($data['payload'], array('data'=>" " . $record['first_name'] ." " .$record['last_name'] . " with ref: " . $record['member_reference'] . " failed to insert"));
-                     $data['failure_count'] = $failed_enrollments_count; 
+                     $data['failure_count'] = $failed_enrollments_count;
                      $data['success_count'] = $successful_enrollments_count;
                 }  $status_code = 200;
             }else{
@@ -76,12 +76,12 @@ class EnrollmentImport implements ToCollection,WithHeadingRow
                 $status_code = 3001;
             }
 
-            
+
         }
          $data['status'] = 2029;
         return json_encode($data);
     }
-   
+
 
     public function rules(): array
     {

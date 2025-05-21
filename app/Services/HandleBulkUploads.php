@@ -35,7 +35,7 @@ class HandleBulkUploads
                 $array = array('first_name'=>$record['first_name'], 'last_name'=>$record['last_name'],
                 'middle_name'=>$record['middle_name'], 'email'=>empty($record['email'])==false ? $record['email'] : $random_email, 'password'=>Hash::make($password),
                 'member_reference'=>$record['member_reference'], 'branch_code'=>$record['branch_code'], 'pin'=>Hash::make($pin),
-                'tier_id'=>1, 'loyalty_program_id'=>1, 'loyalty_number'=>$record['first_name'] .time(),
+                'tier_id'=>1, 'loyalty_program_id'=>1, 'cif_id'=>$record['first_name'] .time(),
                 'cron_id'=>1
             );
                

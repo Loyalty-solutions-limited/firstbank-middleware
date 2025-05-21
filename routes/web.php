@@ -141,14 +141,14 @@ Route::get('/transactions_count', function(Request $request){
 
 
 Route::get('/customer_count2', function(Request $request){
-            $unique_count = DB::table('enrollments')->select(DB::raw('loyalty_number FROM enrollments GROUP BY loyalty_number'))->get();
+            $unique_count = DB::table('enrollments')->select(DB::raw('cif_id FROM enrollments GROUP BY cif_id'))->get();
 			echo $unique_count->count();
 
 });
 
 
 
-//SELECT loyalty_number FROM enrollments GROUP BY loyalty_number
+//SELECT cif_id FROM enrollments GROUP BY cif_id
 //});
 // Route::middleware([EnsureTokenIsValid::class])->group(function () {
 //     Route::get('whoamii', [EnrollmentController::class, 'whoAmI']);

@@ -68,7 +68,7 @@
         <td>{{$ed->first_name}}</td>
         <td>{{$ed->last_name}}</td>
         <td>{{$ed->email?$ed->email:''}}</td>
-        <td>{{$ed->loyalty_number}}</td>
+        <td>{{$ed->cif_id}}</td>
         <td>{{$ed->member_reference}}</td>
         <td>{{ $ed->enrollment_status }}</td>
     </tr>
@@ -115,7 +115,7 @@ $j = $i + 1;
         <td>{{$rep2->firstname}}</td>
         <td>{{$rep2->lastname}}</td>
         <td>{{$rep2->email?$ed->email:''}}</td>
-        <td>{{$rep2->loyalty_number}}</td>
+        <td>{{$rep2->cif_id}}</td>
         <td>{{$rep2->status_code}}</td>
         <td>{{ $rep2->status_message }}</td>
     </tr> 

@@ -22,7 +22,7 @@ class CreateEnrollmentsTable extends Migration
             $table->bigInteger('tier_id')->unsigned();
             //$table->foreign('tier_id')->references('id')->on('tiers');
             $table->string('branch_code')->nullable();
-            $table->string('loyalty_number')->index();
+            $table->string('cif_id')->index();
             $table->string('first_name')->index();
             $table->string('middle_name')->nullable();
             $table->string('last_name')->index();

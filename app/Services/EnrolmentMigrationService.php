@@ -60,7 +60,7 @@ public static function migrateEnrolments1() : string
 
         //dd($company_details);
 
-        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'acid', 'branch_code', 'account_number', 'loyalty_number', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
+        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'acid', 'branch_code', 'account_number', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
         //dd($pendingEnrolments->count());
        if ($pendingEnrolments->count()>0)
        {
@@ -75,7 +75,7 @@ public static function migrateEnrolments1() : string
                     $accDataToPush = array(
                     'Company_username'=>self::$username,//$company_details->username? $company_details->username: 0,
                     'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
-                    'Membership_ID'=>parent::string_encrypt($existingCustomer->loyalty_number, self::$key,self::$iv),
+                    'Membership_ID'=>parent::string_encrypt($existingCustomer->cif_id, self::$key,self::$iv),
                     'Account_number'=>$pendingEnrolment->account_number,
                     'API_flag'=>'attachAcountNumber',
 
@@ -98,7 +98,7 @@ public static function migrateEnrolments1() : string
                         'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
 
                         'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
-                        // 'Membership_ID'=>parent::string_encrypt($pendingEnrolment->loyalty_number, self::$key,self::$iv),
+                        // 'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
 
                         'Branch_code'=>$pendingEnrolment->branch_code,
 
@@ -128,7 +128,7 @@ public static function migrateEnrolments1() : string
 
                                 'lastname' => $pendingEnrolment->last_name?$pendingEnrolment->last_name:'',
 
-                                'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->loyalty_number . '@noemail.com',
+                                'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->cif_id . '@noemail.com',
 
                                 'customerid' => $pendingEnrolment->cif_id?$pendingEnrolment->cif_id:'undefined',
 
@@ -156,7 +156,7 @@ public static function migrateEnrolments1() : string
                                     'email' => $pendingEnrolment->email,
                                 ];
 
-                                //EmailDispatcher::pendMails($pendingEnrolment->loyalty_number, "FLEX BIG ON THE FIRST GREEN REWARDS PROGRAMME", EmailDispatcher::buildEnrolmentTemplate(self::$placeholders, $values), 'no-reply@firstbank-ng.com');
+                                //EmailDispatcher::pendMails($pendingEnrolment->cif_id, "FLEX BIG ON THE FIRST GREEN REWARDS PROGRAMME", EmailDispatcher::buildEnrolmentTemplate(self::$placeholders, $values), 'no-reply@firstbank-ng.com');
 
                 // SendNotificationService::sendMail($repsonse['Email_subject'], $repsonse['Email_body'], $repsonse['bcc_email_address']);
                     //   $jen = SendNotificationService::sendMail('Customer Enrolment Notification', EmailDispatcher::buildEnrolmentTemplate(self::$placeholders, $values),'', $pendingEnrolment->email);
@@ -230,7 +230,7 @@ public static function migrateEnrolments1_old() : string
 
         $company_details = $company_details->getCompanyDetails()->get();
 
-        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'member_reference', 'branch_code', 'loyalty_number', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
+        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'member_reference', 'branch_code', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
 
        if ($pendingEnrolments->count()>0){
 
@@ -240,7 +240,7 @@ public static function migrateEnrolments1_old() : string
 
         $pendingEnrolment->pin ? $pendingEnrolment->pin = $pendingEnrolment->pin : $pendingEnrolment->pin = '0000';
 
-        $pendingEnrolment->email ? $pendingEnrolment->email = $pendingEnrolment->email : $pendingEnrolment->email = $pendingEnrolment->loyalty_number . '@noemail.com';
+        $pendingEnrolment->email ? $pendingEnrolment->email = $pendingEnrolment->email : $pendingEnrolment->email = $pendingEnrolment->cif_id . '@noemail.com';
 
         $pendingEnrolment->branch_code ? $pendingEnrolment->branch_code = $pendingEnrolment->branch_code : $pendingEnrolment->branch_code = '000';
 
@@ -250,7 +250,7 @@ public static function migrateEnrolments1_old() : string
 
                     'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
 
-                    'Membership_ID'=>parent::string_encrypt($pendingEnrolment->loyalty_number, self::$key,self::$iv),
+                    'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
 
                     'Branch_code'=>$pendingEnrolment->branch_code,
 
@@ -280,9 +280,9 @@ public static function migrateEnrolments1_old() : string
 
               'lastname' => $pendingEnrolment->last_name?$pendingEnrolment->last_name:'',
 
-              'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->loyalty_number . '@noemail.com',
+              'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->cif_id . '@noemail.com',
 
-              'customerid' => $pendingEnrolment->loyalty_number?$pendingEnrolment->loyalty_number:'undefined',
+              'customerid' => $pendingEnrolment->cif_id?$pendingEnrolment->cif_id:'undefined',
 
               'branchcode' => $pendingEnrolment->branch_code?$pendingEnrolment->branch_code:'undefined',
 
@@ -300,9 +300,9 @@ public static function migrateEnrolments1_old() : string
 
               //implement send mail
 
-              $values = array($pendingEnrolment->first_name, $pendingEnrolment->last_name, $pendingEnrolment->loyalty_number, $pendingEnrolment->password, parent::$program, parent::$link);
+              $values = array($pendingEnrolment->first_name, $pendingEnrolment->last_name, $pendingEnrolment->cif_id, $pendingEnrolment->password, parent::$program, parent::$link);
 
-              EmailDispatcher::pendMails($pendingEnrolment->loyalty_number, "FLEX BIG ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildEnrolmentTemplate(self::$placeholders, $values), 'no-reply@fdelitybank-ng.com');
+              EmailDispatcher::pendMails($pendingEnrolment->cif_id, "FLEX BIG ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildEnrolmentTemplate(self::$placeholders, $values), 'no-reply@fdelitybank-ng.com');
 
               //SendNotificationService::sendMail($repsonse['Email_subject'], $repsonse['Email_body'], $repsonse['bcc_email_address']);
 

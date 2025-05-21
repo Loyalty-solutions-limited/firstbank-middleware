@@ -47,7 +47,7 @@ class EmailDispatcher{
         if ($pendingMails->count() > 0 ){
             foreach ($pendingMails->get() as $pendingMail){
                
-                $user = Enrollment::where('loyalty_number', $pendingMail->enrolment_id)->first();
+                $user = Enrollment::where('cif_id', $pendingMail->enrolment_id)->first();
                 if (!empty($user)){
                 $recipient = trim($user->email);
                 $snd_mail = self::sendMail($pendingMail->subject, $pendingMail->body, $recipient);

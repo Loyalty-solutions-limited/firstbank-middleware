@@ -64,7 +64,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'user@loyalty.com',
         //     'branch_code'=>1,
         //     'tier_id'=>1,
-        //     'loyalty_number'=>'test001',
+        //     'cif_id'=>'test001',
         //     'current_bal' => 0,
         //     'member_reference' => '1234',
         //     'first_login' => 1,

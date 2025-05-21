@@ -27,13 +27,13 @@ class StatsController extends Controller
             $request->trans_offset?$request->trans_offset=$request->trans_offset:$request->trans_offset=1;
             $request->trans_log_offset?$request->trans_log_offset=$request->trans_log_offset:$request->trans_log_offset=1;
             $request->enrol_log_offset?$request->enrol_log_offset=$request->enrol_log_offset:$request->enrol_log_offset=1;
-            
-        
+
+
             // $unique_count = DB::table('enrollments')
-            //      ->select('loyalty_number', DB::raw('count(*) as total'))
-            //      ->groupBy('loyalty_number')
+            //      ->select('cif_id', DB::raw('count(*) as total'))
+            //      ->groupBy('cif_id')
             //      ->get();
-  
+
             // //$products = $art->products->skip(10)->take(10)->get();
             // $fetch_all_enrolments = Enrollment::skip(($request->enrol_offset - 1)* 500)->take(500)->get();
             // $count_all_enrollments = Enrollment::all();
@@ -41,7 +41,7 @@ class StatsController extends Controller
             // //print_r($count_all_enrolments);
              $fetch_all_transactions = Transaction::skip(($request->trans_offset - 1) * 500)->take(500)->get();
             // $count_all_mails = PendingEmails::all();
-            
+
             // $count_migrated_enrolments = Enrollment::where('enrollment_status', 1)->count();
             // $count_pending_enrolments = Enrollment::where('enrollment_status', 0)->count();
             // $count_failed_enrolments = Enrollment::where('enrollment_status', 0)->where('tries', '>', 3)->count();
@@ -49,7 +49,7 @@ class StatsController extends Controller
             // $reports2 = EnrolReportLog::skip(($request->enrol_log_offset-1) * 100)->take(100)->get();
             // $report2_count = EnrolReportLog::where('id', 0)->count();
             return view('stats.stats-view', ['transaction_data'=>$fetch_all_transactions]);
-        
+
     }
 
     /**

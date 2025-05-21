@@ -73,8 +73,8 @@ public static function passwordReturn(){
 
 
 public static function resolveMemberReference($cif_id){
-    $loyalty_number = Enrollment::where('cif_id', $cif_id)->select('loyalty_number')->first();
-    return $loyalty_number ? $loyalty_number->loyalty_number:null;
+    $cif_id = Enrollment::where('cif_id', $cif_id)->select('cif_id')->first();
+    return $cif_id ? $cif_id->cif_id:null;
 }
 
 public static function isJSON($string){

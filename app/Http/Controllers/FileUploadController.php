@@ -91,7 +91,7 @@ class FileUploadController extends Controller
                 $array = array('first_name'=>$record['first_name'], 'last_name'=>$record['last_name'],
                 'middle_name'=>$record['middle_name'], 'email'=>empty($record['email'])==false ? $record['email'] : $random_email, 'password'=>Hash::make($password),
                 'member_reference'=> 'FB_' .$record['member_reference'], 'branch_code'=>$record['branch_code'], 'pin'=>Hash::make($pin),
-                'tier_id'=>1, 'loyalty_program_id'=>1, 'loyalty_number'=>time(),
+                'tier_id'=>1, 'loyalty_program_id'=>1, 'cif_id'=>time(),
                 'cron_id'=>time()
             );
             //}

@@ -24,7 +24,7 @@ class EmailChannelController extends Controller
                 "body"=> $request->body
             ];
 
-            //$loyalty_number = trim(EnrolmentMigrationService::string_decrypt($request->Membership_ID, 'SmoothJay', '5666685225155700'));
+            //$cif_id = trim(EnrolmentMigrationService::string_decrypt($request->Membership_ID, 'SmoothJay', '5666685225155700'));
             $url = env('EMAIL_SERVICE_URL');
             $response = CurlService::doCURL($url, $data);
 

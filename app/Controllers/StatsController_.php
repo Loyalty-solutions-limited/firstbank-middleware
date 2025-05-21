@@ -57,19 +57,19 @@ class StatsController extends Controller
 
             $request->enrol_log_offset?$request->enrol_log_offset=$request->enrol_log_offset:$request->enrol_log_offset=1;
 
-           
 
-       
+
+
 
             $unique_count = DB::table('enrollments')
 
-                 ->select('loyalty_number', DB::raw('count(*) as total'))
+                 ->select('cif_id', DB::raw('count(*) as total'))
 
-                 ->groupBy('loyalty_number')
+                 ->groupBy('cif_id')
 
                  ->get();
 
- 
+
 
             //$products = $art->products->skip(10)->take(10)->get();
 
@@ -85,7 +85,7 @@ class StatsController extends Controller
 
             $count_all_mails = PendingEmails::where('id', '>', 0)->limit(100)->get();
 
-           
+
 
             $count_migrated_enrolments = Enrollment::where('enrollment_status', 1)->count();
 
@@ -101,7 +101,7 @@ class StatsController extends Controller
 
             return view('stats.stats-view', ['enrolment_data'=>$fetch_all_enrolments, 'transaction_data'=>$fetch_all_transactions, 'mails'=>$count_all_mails, 'reports'=>$reports, 'reports2_count'=> $report2_count, 'failed_enrollments'=>$count_failed_enrolments, 'reports2'=>$reports2,'successful_enrollments'=>$count_migrated_enrolments, 'pending_enrollments'=>$count_pending_enrolments, 'unique_customer_count'=>$unique_count]);
 
-       
+
 
     }
 

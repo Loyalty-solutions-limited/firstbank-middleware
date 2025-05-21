@@ -63,9 +63,9 @@ class StatsController extends Controller
 
             $unique_count = DB::table('enrollments')
 
-                 ->select('loyalty_number', DB::raw('count(*) as total'))
+                 ->select('cif_id', DB::raw('count(*) as total'))
 
-                 ->groupBy('loyalty_number')
+                 ->groupBy('cif_id')
 
                  ->get();
 

@@ -30,8 +30,8 @@ class StatsController extends Controller
             
         
             // $unique_count = DB::table('enrollments')
-            //      ->select('loyalty_number', DB::raw('count(*) as total'))
-            //      ->groupBy('loyalty_number')
+            //      ->select('cif_id', DB::raw('count(*) as total'))
+            //      ->groupBy('cif_id')
             //      ->get();
   
             // //$products = $art->products->skip(10)->take(10)->get();

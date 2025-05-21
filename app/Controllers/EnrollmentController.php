@@ -69,7 +69,7 @@ class EnrollmentController extends Controller
             'branch' => 'required|numeric',
             'phone' => 'nullable|numeric',
             'tier_id' => 'required|numeric',
-            'loyalty_number' => 'required|string'
+            'cif_id' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -77,7 +77,7 @@ class EnrollmentController extends Controller
         }
 
         try {
-            $response = $this->add_enrollment($request->first_name, $request->middle_name, $request->last_name, $request->branch, $request->loyalty_program_id, $request->email, $request->phone, $request->member_reference, $request->tier_id, $request->loyalty_number);
+            $response = $this->add_enrollment($request->first_name, $request->middle_name, $request->last_name, $request->branch, $request->loyalty_program_id, $request->email, $request->phone, $request->member_reference, $request->tier_id, $request->cif_id);
             if (!$response) {
                 //Insert Failed Enrollment Log
                 $this->EnrolLog($request->first_name, $request->last_name, $request->email, $request->phone, $response->id, 'branchCode', $file_id=0, false, 'Customer could not be enrolled');
@@ -99,7 +99,7 @@ class EnrollmentController extends Controller
         }
     }
 
-    private function add_enrollment($first_name, string $middle_name = null, $last_name, $branch, $loyalty_program_id, $email, int $phone=null, $member_no, $tier_id, $loyalty_number)
+    private function add_enrollment($first_name, string $middle_name = null, $last_name, $branch, $loyalty_program_id, $email, int $phone=null, $member_no, $tier_id, $cif_id)
     {
         $pin = time();
         $password = $first_name.'@'.time();
@@ -115,7 +115,7 @@ class EnrollmentController extends Controller
         $insert->phone_number = $phone;
         $insert->password = $harsh_pass;
         $insert->tier_id = $tier_id;
-        $insert->loyalty_number = $loyalty_number;
+        $insert->cif_id = $cif_id;
         $insert->member_reference = $member_no;
         $insert->first_login = 0;
         $insert->terms_agreed = 0;
@@ -322,7 +322,7 @@ class EnrollmentController extends Controller
     public function get_enrollment_by_number(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'loyalty_number' => 'required|string'
+            'cif_id' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -330,7 +330,7 @@ class EnrollmentController extends Controller
         }
 
         try {
-            $customer = $this->getEnrollmentByNumber($request->loyalty_number);
+            $customer = $this->getEnrollmentByNumber($request->cif_id);
             // dd($customer);
 
             if ($customer->isEmpty()) {
@@ -349,7 +349,7 @@ class EnrollmentController extends Controller
         ->join('loyalty_programs', 'loyalty_programs.id', '=', 'enrollments.loyalty_program_id')
         ->join('branches', 'branches.id', '=', 'enrollments.branch_id')
         ->join('tiers', 'tiers.id', '=', 'enrollments.tier_id')
-        ->where('loyalty_number', $member_no)
+        ->where('cif_id', $member_no)
         ->get();
 
         return $customer;
@@ -492,9 +492,9 @@ class EnrollmentController extends Controller
         return true;
     }
 
-    public function getStatement($loyalty_number)
+    public function getStatement($cif_id)
     {
-        $data = $this->get_statement($loyalty_number);
+        $data = $this->get_statement($cif_id);
         if (!$data) {
             return $this->sendBadRequestResponse('Error', 'Transaction details not found');
         }
@@ -543,7 +543,7 @@ class EnrollmentController extends Controller
 
     private function get_statement($id)
     {
-        $enroller = DB::table('enrollments')->where('loyalty_number', $id)->first();
+        $enroller = DB::table('enrollments')->where('cif_id', $id)->first();
         if (!$enroller) {
             return $this->sendBadRequestResponse('Error', 'Member Not found');
         }
@@ -556,7 +556,7 @@ class EnrollmentController extends Controller
         $validator = Validator::make($request->all(), [
             'start_date' => '',
             'end_date' => '',
-            'loyalty_number' => 'required'
+            'cif_id' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -564,7 +564,7 @@ class EnrollmentController extends Controller
         }
 
         try {
-            $response = $this->search_statement($request->start_date, $request->end_date, $request->loyalty_number);
+            $response = $this->search_statement($request->start_date, $request->end_date, $request->cif_id);
             return $this->sendSuccessResponse('Success', $response);
         } catch (QueryException $ex) {
             return $ex->getMessage();
@@ -574,7 +574,7 @@ class EnrollmentController extends Controller
 
     private function search_statement($var1, $var2, $number)
     {
-        $member = DB::table('enrollments')->where('loyalty_number', $number)->first();
+        $member = DB::table('enrollments')->where('cif_id', $number)->first();
         if (!$member) {
             return $this->sendBadRequestResponse('Error', 'Member Not found');
         }
@@ -590,7 +590,7 @@ class EnrollmentController extends Controller
         }
     }
 
-    
+
     public function uploadEnrollments(Request $request)
     {
         //return $request->all(); exit;
@@ -598,16 +598,16 @@ class EnrollmentController extends Controller
         'data' => 'required'
         ]);
 
-        
+
         if ($validator->fails()) {
             return $this->sendBadRequestResponse($validator->errors());
         }
 
         $service = new HandleBulkUploads();
-        
+
         return $service->uploadEnrolmentData($request);
-        
-       
+
+
     }
 
 
@@ -711,15 +711,15 @@ class EnrollmentController extends Controller
     }
 
     public function whoAmI(Request $request){
-        
-        return Enrollment::where('loyalty_number', $request->loyalty_number)->select('email', 'first_name', 'last_name', 'member_reference')->first();
+
+        return Enrollment::where('cif_id', $request->cif_id)->select('email', 'first_name', 'last_name', 'member_reference')->first();
     }
 
     public function whoAmI2(Request $request){
         //return $request->all();
 		//print_r(Enrollment::where('id', '>', 0)->get());
-        return Enrollment::where('member_reference', $request->member_reference)->select('email', 'first_name', 'last_name', 'loyalty_number')->first();
+        return Enrollment::where('member_reference', $request->member_reference)->select('email', 'first_name', 'last_name', 'cif_id')->first();
     }
-    
- 
+
+
 }

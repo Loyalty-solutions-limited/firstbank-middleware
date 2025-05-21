@@ -20,7 +20,7 @@ class Enrollment extends Authenticatable
         'middle_name',
         'last_name',
         'loyalty_program_id',
-        'loyalty_number',
+        'cif_id',
         'phone_number',
         'email',
          'branch_code',

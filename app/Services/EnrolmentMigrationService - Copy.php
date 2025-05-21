@@ -28,13 +28,13 @@ class EnrolmentMigrationService extends MigrationService{
 
   public static $placeholders = array('$first_name', '$last_name', '$membership_id',  '$password', '$program', '$link');
 
- 
+
 
     public function __construct()
 
     {
 
-       
+
 
     }
 
@@ -46,7 +46,7 @@ class EnrolmentMigrationService extends MigrationService{
 
         //$this->key = '!QAZXSW@#EDCVFR$';
 
-       
+
 
         self::$username = 'diamondcustomer';
 
@@ -72,7 +72,7 @@ class EnrolmentMigrationService extends MigrationService{
 
         $pendingEnrolment->pin ? $pendingEnrolment->pin = $pendingEnrolment->pin : $pendingEnrolment->pin = '0000';
 
-        $pendingEnrolment->email ? $pendingEnrolment->email = $pendingEnrolment->email : $pendingEnrolment->email = $pendingEnrolment->loyalty_number . '@noemail.com';
+        $pendingEnrolment->email ? $pendingEnrolment->email = $pendingEnrolment->email : $pendingEnrolment->email = $pendingEnrolment->cif_id . '@noemail.com';
 
         $pendingEnrolment->branch_code ? $pendingEnrolment->branch_code = $pendingEnrolment->branch_code : $pendingEnrolment->branch_code = '000';
 
@@ -82,7 +82,7 @@ class EnrolmentMigrationService extends MigrationService{
 
                     'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
 
-                    'Membership_ID'=>parent::string_encrypt($pendingEnrolment->loyalty_number, self::$key,self::$iv),
+                    'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
 
                     'Branch_code'=>$pendingEnrolment->branch_code,
 
@@ -92,7 +92,7 @@ class EnrolmentMigrationService extends MigrationService{
 
                     'API_flag'=>'enrol',
 
-                   
+
 
          );
 
@@ -110,9 +110,9 @@ class EnrolmentMigrationService extends MigrationService{
 
               //implement send mail
 
-              $values = array($pendingEnrolment->first_name, $pendingEnrolment->last_name, $pendingEnrolment->loyalty_number, $pendingEnrolment->password, parent::$program, parent::$link);
+              $values = array($pendingEnrolment->first_name, $pendingEnrolment->last_name, $pendingEnrolment->cif_id, $pendingEnrolment->password, parent::$program, parent::$link);
 
-              EmailDispatcher::pendMails($pendingEnrolment->loyalty_number, "FLEX BIG ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildEnrolmentTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
+              EmailDispatcher::pendMails($pendingEnrolment->cif_id, "FLEX BIG ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildEnrolmentTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
 
               //SendNotificationService::sendMail($repsonse['Email_subject'], $repsonse['Email_body'], $repsonse['bcc_email_address']);
 
@@ -124,9 +124,9 @@ class EnrolmentMigrationService extends MigrationService{
 
                 'lastname' => $pendingEnrolment->last_name,
 
-                'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->loyalty_number . '@noemail.com',
+                'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->cif_id . '@noemail.com',
 
-                'customerid' => $pendingEnrolment->loyalty_number,
+                'customerid' => $pendingEnrolment->cif_id,
 
                 'branchcode' => $pendingEnrolment->branch_code,
 
@@ -156,9 +156,9 @@ class EnrolmentMigrationService extends MigrationService{
 
                 'lastname' => $pendingEnrolment->last_name,
 
-                'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->loyalty_number . 'no-email@email.com',
+                'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->cif_id . 'no-email@email.com',
 
-                'customerid' => $pendingEnrolment->loyalty_number,
+                'customerid' => $pendingEnrolment->cif_id,
 
                 'branchcode' => $pendingEnrolment->branch_code,
 
@@ -192,13 +192,13 @@ class EnrolmentMigrationService extends MigrationService{
 
     }
 
-         
+
 
   }else{
 
           $data['message'] = "no un-enroled customers found";
 
-         
+
 
        }
 
@@ -218,7 +218,7 @@ public static function migrateEnrolments2() : void
 
     //$this->key = '!QAZXSW@#EDCVFR$';
 
-   
+
 
     self::$username = 'diamondcustomer';
 
@@ -266,7 +266,7 @@ public static function migrateEnrolments2() : void
 
       if($repsonse){
 
-         
+
 
       if ($repsonse['status'] == 1001){
 
@@ -284,7 +284,7 @@ public static function migrateEnrolments2() : void
 
         'fileid'=>0, 'status_code'=>$repsonse['status'], 'status_message'=>$repsonse['Status_message']]);
 
-       
+
 
         //Log::info('data migrated ' . $success_count);
 
@@ -298,7 +298,7 @@ public static function migrateEnrolments2() : void
 
         'fileid'=>0, 'status_code'=>$repsonse['status'], 'status_message'=>$repsonse['Status_message']]);
 
-       
+
 
         //Log::info('failed to migrate '. $failure_count);
 
@@ -308,19 +308,19 @@ public static function migrateEnrolments2() : void
 
 else{
 
-   
+
 
 }
 
 }
 
-     
+
 
    }else{
 
       $data['message'] = "no un-enroled customers found";
 
-       
+
 
    }
 
@@ -329,7 +329,7 @@ else{
 
 
 
- 
+
 
 
 

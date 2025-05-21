@@ -50,11 +50,11 @@ class TransactionMigrationService extends MigrationService{
                 $product_name = json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/get_product_group_name?product_code=".$pendingTransaction->product_code), true);
               //  if (isset($member->first_name)){
                 $product_name = $product_name['product_brand_name'];
-                $values = array(isset($member->first_name)?$member->first_name:'', isset($member->last_name)?$member->last_name:'', 0, 0, parent::$program, isset($member->loyalty_number)?$member->loyalty_number:'', "https://loyalty.fidelitybank.ng/login.php", $product_name);
+                $values = array(isset($member->first_name)?$member->first_name:'', isset($member->last_name)?$member->last_name:'', 0, 0, parent::$program, isset($member->cif_id)?$member->cif_id:'', "https://loyalty.fidelitybank.ng/login.php", $product_name);
                 $resp = 
                 parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                 print_r($resp);
-				//echo".." . $member->loyalty_number . $pendingTransaction->member_reference ."<br>";
+				//echo".." . $member->cif_id . $pendingTransaction->member_reference ."<br>";
                 $repsonse = json_decode($resp, true); 
             if ($repsonse){
             if ($repsonse['status'] == 1001){
@@ -126,11 +126,11 @@ class TransactionMigrationService extends MigrationService{
                 $product_name = json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/get_product_group_name?product_code=".$pendingTransaction->product_code), true);
               //  if (isset($member->first_name)){
                 $product_name = $product_name['product_brand_name'];
-                $values = array(isset($member->first_name)?$member->first_name:'', isset($member->last_name)?$member->last_name:'', 0, 0, parent::$program, isset($member->loyalty_number)?$member->loyalty_number:'', "https://loyalty.fidelitybank.ng/login.php", $product_name);
+                $values = array(isset($member->first_name)?$member->first_name:'', isset($member->last_name)?$member->last_name:'', 0, 0, parent::$program, isset($member->cif_id)?$member->cif_id:'', "https://loyalty.fidelitybank.ng/login.php", $product_name);
                 $resp = 
                 parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                 print_r($resp);
-				//echo".." . $member->loyalty_number . $pendingTransaction->member_reference ."<br>";
+				//echo".." . $member->cif_id . $pendingTransaction->member_reference ."<br>";
                 $repsonse = json_decode($resp, true); 
             if ($repsonse){
             if ($repsonse['status'] == 1001){
@@ -205,11 +205,11 @@ public static function runSpecificTransactions($data){
                 $product_name = json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/get_product_group_name?product_code=".$pendingTransaction->product_code), true);
               //  if (isset($member->first_name)){
                 $product_name = $product_name['product_brand_name'];
-                $values = array(isset($member->first_name)?$member->first_name:'', isset($member->last_name)?$member->last_name:'', 0, 0, parent::$program, isset($member->loyalty_number)?$member->loyalty_number:'', "https://loyalty.fidelitybank.ng/login.php", $product_name);
+                $values = array(isset($member->first_name)?$member->first_name:'', isset($member->last_name)?$member->last_name:'', 0, 0, parent::$program, isset($member->cif_id)?$member->cif_id:'', "https://loyalty.fidelitybank.ng/login.php", $product_name);
                 $resp = 
                 parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                 print_r($resp);
-				//echo".." . $member->loyalty_number . $pendingTransaction->member_reference ."<br>";
+				//echo".." . $member->cif_id . $pendingTransaction->member_reference ."<br>";
                 $repsonse = json_decode($resp, true); 
             if ($repsonse){
             if ($repsonse['status'] == 1001){
@@ -283,11 +283,11 @@ public static function runSpecificTransactions($data){
                 $product_name = json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/get_product_group_name?product_code=".$pendingTransaction->product_code), true);
               //  if (isset($member->first_name)){
                 $product_name = $product_name['product_brand_name'];
-                $values = array(isset($member->first_name)?$member->first_name:'', isset($member->last_name)?$member->last_name:'', 0, 0, parent::$program, isset($member->loyalty_number)?$member->loyalty_number:'', "https://loyalty.fidelitybank.ng/login.php", $product_name);
+                $values = array(isset($member->first_name)?$member->first_name:'', isset($member->last_name)?$member->last_name:'', 0, 0, parent::$program, isset($member->cif_id)?$member->cif_id:'', "https://loyalty.fidelitybank.ng/login.php", $product_name);
                 $resp = 
                 parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                 print_r($resp);
-				//echo".." . $member->loyalty_number . $pendingTransaction->member_reference ."<br>";
+				//echo".." . $member->cif_id . $pendingTransaction->member_reference ."<br>";
                 $repsonse = json_decode($resp, true); 
             if ($repsonse){
             if ($repsonse['status'] == 1001){
