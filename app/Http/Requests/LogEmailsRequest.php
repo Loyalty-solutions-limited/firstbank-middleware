@@ -24,13 +24,13 @@ class LogEmailsRequest extends FormRequest
     public function rules()
     {
         return [
-            'membership_id' => 'required',
+            'acid' => 'required',
             // 'membership_id' => 'required|exists:lsl_enrollment_master',
             'email_type'=> 'required',// could be Transaction or Enrollment,
             'subject' => 'required',
             'body' => 'required',
             'trans_ref' => 'required_if:email_type,transaction',
-            'email' => 'required',
+            // 'email' => 'required',
         ];
     }
 }

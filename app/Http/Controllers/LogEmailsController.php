@@ -43,13 +43,15 @@ class LogEmailsController extends Controller
     public function sendMail(LogEmailsRequest $request)
     {
         $data = array("sender"=>"noreply@firstbank", "from"=> "noreply@firstbank.ng","to"=>$request->email, "subject"=>$request->subject, "body"=> $request->body);
-        $url = env('EMAIL_SERVICE_URL');
-        $response = CurlService::doCURL($url, $data);
-        echo json_encode($response);
-            if($response['response'] == 1){
+        $url = env('POINTS_TO_CASH_URL') . "email/send-mail";
+        // $response = CurlService::doCURL($url, $request->all());
+       $response = json_decode($this->makeCurl($url, 'POST', $request->all()));
+
+        echo json_decode($response);
+            if($response['responseCode'] == "00"){
                 // $update_status = LogEmails::where('id',$data->id)->update(['status' => 1]);
             $insert_log = LogEmails::create(array_merge($request->all(), ['status' => 1]));
-                echo "Email Sent Successfullt";
+                echo "Email Sent Successfully";
             }else{
                 echo "Email failed to send";
             }
@@ -88,6 +90,45 @@ class LogEmailsController extends Controller
         }else{
             echo "No Pending Emails";
         }
+    }
+
+    public function getMailParameters()
+    {
+        $url = env('POINTS_TO_CASH_URL') . "email/supported-parameters";
+
+        return $this->makeCurl($url, 'GET', "");
+
+
+    }
+
+    public function makeCurl($url, $action, $data)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => $action,
+        CURLOPT_POSTFIELDS =>$data,
+        CURLOPT_HTTPHEADER => array(
+            'Accept: application/json',
+            "AppId: ".config("externalservices.POINTS_TO_CASH_APPID"),
+            "AppKey: ".config("externalservices.POINTS_TO_CASH_APPKEY"),
+            'Content-Type: application/json',
+            'Cookie: ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+
+        curl_close($curl);
+        // return $response;
     }
 
 
