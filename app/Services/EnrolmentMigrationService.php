@@ -61,6 +61,8 @@ public static function migrateEnrolments1() : string
         //dd($company_details);
 
         $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->limit(1000);//->get();//->where('tries', '<', 5);//->get();
+
+        // return response()->json(['data' => $pendingEnrolments]);
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
         //dd($pendingEnrolments->count());
        if ($pendingEnrolments->count()>0)
@@ -82,7 +84,8 @@ public static function migrateEnrolments1() : string
 
                     );
 
-                    parent::pushToPERX(parent::$url, $accDataToPush, parent::$headerPayload);
+                    // parent::pushToPERX(parent::$url, $accDataToPush, parent::$headerPayload);
+                    array_push($data, $accDataToPush);
                 } else {
                     $pendingEnrolment->password ? $pendingEnrolment->password = $pendingEnrolment->password : $pendingEnrolment->password = '1234';
 
@@ -112,7 +115,8 @@ public static function migrateEnrolments1() : string
                         'API_flag'=>'enrol',
                     );
 
-                    $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
+                    // $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
+                    array_push($data, $arrayToPush);
                     //dd($resp);
                     if (parent::isJSON($resp))
                     {
@@ -200,6 +204,7 @@ public static function migrateEnrolments1() : string
             }
 
         }
+        return response()->json(['data' => $data]);
         }else{
             $data['message'] = "no un-enroled customers found";
         }
