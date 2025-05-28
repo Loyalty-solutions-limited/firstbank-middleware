@@ -118,9 +118,11 @@ public static function migrateEnrolments1() : string
                     // $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                     array_push($data, $arrayToPush);
                     //dd($resp);
-                    if (parent::isJSON($resp))
+                    if (true)
+                    // if (parent::isJSON($resp))
                     {
-                        $repsonse = json_decode($resp, true);
+                        $repsonse = true;
+                        // $repsonse = json_decode($resp, true);
 
                    // dd($repsonse);
 
