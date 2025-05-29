@@ -7,20 +7,20 @@ class MigrationService {
     public static $iv = '5666685225155700';
     protected static $program = "Firstbank Green Rewards Programme";
     protected static $placeholders = array('$memberID', '$first_name', '$last_name', '$pin', '$points', '$email', '$program');
-    protected static $link = "https://fbnportal.perxclm5.com/login.php";
+    protected static $link = "https://firstreward.firstbanknigeria.com/login.php";
 
 
     protected static $headerPayload = array(
         //'Content-Type: application/json',
     );
-    protected static $url = "https://172.28.65.0/api/v1/index.php";
+    protected static $url = "https://192.168.45.4/api/v1/index.php";
     // protected static $url = "https://fbn.perxclm5.com/api/v1/index.php";
 
     public function __construct()
     {
 
     }
-    protected static function pushToPERX($url="https://172.28.65.0/api/v1/index.php", $postFields, $payload)
+    protected static function pushToPERX($url="https://192.168.45.4/api/v1/index.php", $postFields, $payload)
     {
 
         $curl= curl_init();
