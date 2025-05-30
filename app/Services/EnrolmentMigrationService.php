@@ -107,7 +107,8 @@ public static function migrateEnrolments1() : string
                         'Branch_code'=>$pendingEnrolment->branch_code,
 
                         //'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:'1234',
-                        'auto_gen_password'=>$pendingEnrolment->password?Hash::make($pendingEnrolment->password):Hash::make(1234),
+                        'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:1234,
+                        // 'auto_gen_password'=>$pendingEnrolment->password?Hash::make($pendingEnrolment->password):Hash::make(1234),
 
                         'auto_gen_pin'=>$pendingEnrolment->pin?$pendingEnrolment->pin:'0000',
                         'member_reference'=>$pendingEnrolment->cif_id?$pendingEnrolment->cif_id:'',
@@ -115,14 +116,11 @@ public static function migrateEnrolments1() : string
                         'API_flag'=>'enrol',
                     );
 
-                    // $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
-                    array_push($data, $arrayToPush);
+                    $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                     //dd($resp);
-                    if (true)
-                    // if (parent::isJSON($resp))
+                    if (parent::isJSON($resp))
                     {
-                        $repsonse = true;
-                        // $repsonse = json_decode($resp, true);
+                        $repsonse = json_decode($resp, true);
 
                    // dd($repsonse);
 
@@ -206,7 +204,6 @@ public static function migrateEnrolments1() : string
             }
 
         }
-        return response()->json(['data' => $data]);
         }else{
             $data['message'] = "no un-enroled customers found";
         }
