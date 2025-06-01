@@ -13,14 +13,14 @@ class MigrationService {
     protected static $headerPayload = array(
         //'Content-Type: application/json',
     );
-    protected static $url = "https://192.168.45.4:443/api/v1/index.php";
+    protected static $url = "https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/api/v1/index.php";
     // protected static $url = "https://fbn.perxclm5.com/api/v1/index.php";
 
     public function __construct()
     {
 
     }
-    protected static function pushToPERX($url="https://192.168.45.4:443/api/v1/index.php", $postFields, $payload)
+    protected static function pushToPERX($url="https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/api/v1/index.php", $postFields, $payload)
     {
 
         $curl= curl_init();
