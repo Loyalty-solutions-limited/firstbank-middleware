@@ -136,25 +136,25 @@ public static function migrateEnrolments1() : string
                         if ($repsonse)
                         {
 
-                            EnrolReportLog::create([
+                            // EnrolReportLog::create([
 
-                                'firstname' => $pendingEnrolment->first_name?$pendingEnrolment->first_name:'',
+                            //     'firstname' => $pendingEnrolment->first_name?$pendingEnrolment->first_name:'',
 
-                                'lastname' => $pendingEnrolment->last_name?$pendingEnrolment->last_name:'',
+                            //     'lastname' => $pendingEnrolment->last_name?$pendingEnrolment->last_name:'',
 
-                                'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->cif_id . '@noemail.com',
+                            //     'email' => $pendingEnrolment->email ? $pendingEnrolment->email : $pendingEnrolment->cif_id . '@noemail.com',
 
-                                'customerid' => $pendingEnrolment->cif_id?$pendingEnrolment->cif_id:'undefined',
+                            //     'customerid' => $pendingEnrolment->cif_id?$pendingEnrolment->cif_id:'undefined',
 
-                                'branchcode' => $pendingEnrolment->branch_code?$pendingEnrolment->branch_code:'undefined',
+                            //     'branchcode' => $pendingEnrolment->branch_code?$pendingEnrolment->branch_code:'undefined',
 
-                                'fileid' => 0,
+                            //     'fileid' => 0,
 
-                                'status_code' => $repsonse['status']?$repsonse['status']:'undefined',
+                            //     'status_code' => $repsonse['status']?$repsonse['status']:'undefined',
 
-                                'status_message' => $repsonse['Status_message']?$repsonse['Status_message']:'undefined'
+                            //     'status_message' => $repsonse['Status_message']?$repsonse['Status_message']:'undefined'
 
-                            ]);
+                            // ]);
 
                             if ($repsonse['status'] == 1001)
                             {
