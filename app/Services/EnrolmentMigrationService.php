@@ -84,8 +84,9 @@ public static function migrateEnrolments1() : string
 
                     );
 
-                    // parent::pushToPERX(parent::$url, $accDataToPush, parent::$headerPayload);
-                    array_push($data, $accDataToPush);
+                    $res = parent::pushToPERX(parent::$url, $accDataToPush, parent::$headerPayload);
+                    echo $res;
+                    // array_push($data, $accDataToPush);
                 } else {
                     $pendingEnrolment->password ? $pendingEnrolment->password = $pendingEnrolment->password : $pendingEnrolment->password = '1234';
 
@@ -117,6 +118,7 @@ public static function migrateEnrolments1() : string
                     );
 
                     $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
+                    echo $resp;
                     // dd($resp);
                     if (parent::isJSON($resp))
                     {
