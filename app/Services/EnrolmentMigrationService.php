@@ -25,7 +25,7 @@ class EnrolmentMigrationService extends MigrationService{
 
   public static $key = '!QAZXSW@#EDCVFR$';
 
-  public static $iv = '1234567891011121' //'5666685225155700';
+  public static $iv = '1234567891011121'; //'5666685225155700';
 
   public static $placeholders = array('$first_name', '$last_name', '$membership_id',  '$password', '$program', '$link');
 
