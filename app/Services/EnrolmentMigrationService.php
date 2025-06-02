@@ -84,8 +84,12 @@ public static function migrateEnrolments1() : string
 
                     );
 
-                    $res = parent::pushToPERX(parent::$url, $accDataToPush, parent::$headerPayload);
-                    echo $res;
+                    try {
+                        $res = parent::pushToPERX(parent::$url, $accDataToPush, parent::$headerPayload);
+                        echo $res;
+                    } catch (\Exception $ex) {
+                        throw new \Exception("something went wrong " . $ex->getMessage());
+                    }
                     // array_push($data, $accDataToPush);
                 } else {
                     $pendingEnrolment->password ? $pendingEnrolment->password = $pendingEnrolment->password : $pendingEnrolment->password = '1234';
@@ -116,9 +120,12 @@ public static function migrateEnrolments1() : string
 
                         'API_flag'=>'enrol',
                     );
-
-                    $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
-                    echo $resp;
+                    try {
+                        $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
+                        echo $resp;
+                    } catch (\Exception $ex) {
+                        throw new \Exception("Something went wrong " . $ex->getMessage());
+                    }
                     // dd($resp);
                     if (parent::isJSON($resp))
                     {
