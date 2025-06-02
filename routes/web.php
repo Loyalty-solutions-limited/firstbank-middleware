@@ -78,9 +78,7 @@ Route::post('/log-emails', [LogEmailsController::class, 'log']);
 Route::post('/send-email-API', [LogEmailsController::class, 'sendWithAPI']);
 Route::post('/send-email-SMTP', [LogEmailsController::class, 'sendWithSMTP']);
 Route::get('/get-mail-parameters', [LogEmailsController::class, 'getMailParameters']);
-Route::get('/test-route', function(){
-    return "Hi...";
-});
+Route::get('/test-route', [EnrollmentController::class, 'test_db']);
 Route::get('stran2', function(){
 	// return TransactionMigrationService::migrateTransaction2();
 	return TMS::migrateTransaction2();

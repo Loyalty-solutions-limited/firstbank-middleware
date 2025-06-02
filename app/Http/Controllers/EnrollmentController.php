@@ -714,10 +714,10 @@ class EnrollmentController extends Controller
     public function whoAmI(Request $request)
     {
 
-        if(!($request->cif_id)) return response()->json([
-            "message" => "Please, provide a loyalty number",
-            "status" => false
-        ], Response::HTTP_EXPECTATION_FAILED);
+        // if(!($request->cif_id)) return response()->json([
+        //     "message" => "Please, provide a loyalty number",
+        //     "status" => false
+        // ], Response::HTTP_EXPECTATION_FAILED);
 
         $user = Enrollment::where('cif_id', $request->cif_id)
                             ->select('email', 'first_name', 'last_name', 'cif_id')
@@ -744,10 +744,10 @@ class EnrollmentController extends Controller
 
     public function whoAmI2(Request $request){
         //return $request->all();
-        if(!($request->member_reference)) return response()->json([
-            "message" => "Please, provide a member reference",
-            "status"  => false
-        ], Response::HTTP_EXPECTATION_FAILED);
+        // if(!($request->member_reference)) return response()->json([
+        //     "message" => "Please, provide a member reference",
+        //     "status"  => false
+        // ], Response::HTTP_EXPECTATION_FAILED);
 
         $user = Enrollment::where('member_reference', $request->member_reference)
                             ->select('email', 'first_name', 'last_name', 'cif_id')
