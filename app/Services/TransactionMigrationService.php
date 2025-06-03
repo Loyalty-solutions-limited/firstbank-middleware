@@ -335,60 +335,61 @@ public static function rollbackTransactions($id)
 	  //echo $success_count;
 	  //echo Transaction->all
 	  $payload = array(); //rollback emails till 7th of feb 2023
-      $pendingTransactions = Transaction::where('status', '=', 0)->limit(50);
-      return $pendingTransactions;
+      $pendingTransactions = Transaction::limit(50)->get();
+    //   $pendingTransactions = Transaction::where('status', '=', 0)->limit(50);
+    //   return $pendingTransactions;
     //   dd($pendingTransactions->count());
 	  //echo $pendingTransactions->count(); exit;
     //   return response()->json(['data' => $pendingTransactions]);
-    //   if($pendingTransactions->count() > 0){
-    //       foreach($pendingTransactions->get() as $pendingTransaction){
-    //         //$pendingTransaction->quantity  = 1;
-    //         //dd($pendingTransaction);
-    //         // $membership_id_resolved = parent::resolveMemberReference($pendingTransaction->cif_id) ?? '8731110';
-    //         //dd($membership_id_resolved);
-    //           $arrayToPush = array(
-    //             'Company_username'=>self::$username,
-    //             'Company_password'=>parent::passwordReturn(),
-    //             'Membership_ID'=>$pendingTransaction->cif_id,
-    //             // 'Membership_ID'=>$membership_id_resolved ?? '8711130',
-    //             'Transaction_Date'=>$pendingTransaction->transaction_date,
-    //             'Transaction_Type_code'=>$pendingTransaction->transaction_type,
-    //             'Transaction_channel_code'=>$pendingTransaction->channel,
-    //             'Transaction_amount'=>$pendingTransaction->amount,
-    //             'Branch_code'=>$pendingTransaction->branch_code,
-    //             'Transaction_ID'=>$pendingTransaction->transaction_reference,
-    //             'Product_Code' =>$pendingTransaction->product_code,
-    //             'Product_Quantity' =>$pendingTransaction->quantity,
-    //             'API_flag' => 'stran',
-    //             'id'=>$pendingTransaction->id
-    //             );
-    //             // $pendingTransaction->update(['status' => 1]);
-	// 			array_push($payload, $arrayToPush);
-	// 	  }
+      if($pendingTransactions->count() > 0){
+          foreach($pendingTransactions->get() as $pendingTransaction){
+            //$pendingTransaction->quantity  = 1;
+            //dd($pendingTransaction);
+            // $membership_id_resolved = parent::resolveMemberReference($pendingTransaction->cif_id) ?? '8731110';
+            //dd($membership_id_resolved);
+              $arrayToPush = array(
+                'Company_username'=>self::$username,
+                'Company_password'=>parent::passwordReturn(),
+                'Membership_ID'=>$pendingTransaction->cif_id,
+                // 'Membership_ID'=>$membership_id_resolved ?? '8711130',
+                'Transaction_Date'=>$pendingTransaction->transaction_date,
+                'Transaction_Type_code'=>$pendingTransaction->transaction_type,
+                'Transaction_channel_code'=>$pendingTransaction->channel,
+                'Transaction_amount'=>$pendingTransaction->amount,
+                'Branch_code'=>$pendingTransaction->branch_code,
+                'Transaction_ID'=>$pendingTransaction->transaction_reference,
+                'Product_Code' =>$pendingTransaction->product_code,
+                'Product_Quantity' =>$pendingTransaction->quantity,
+                'API_flag' => 'stran',
+                'id'=>$pendingTransaction->id
+                );
+                $pendingTransaction->update(['status' => 1]);
+				array_push($payload, $arrayToPush);
+		  }
 
 
-    //             try {
+                try {
 
-    //                 $resp =
-    //                 // parent::pushToPERX("https://staging-env.perxclm.com/stage-data.php", $payload, parent::$headerPayload);
-    //                 //parent::pushToPERX("https://firstbankloyalty.perxclm.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
-    //                 //parent::pushToPERX("https://demo.firstrewards.loyaltysolutionsnigeria.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
-    //                 parent::pushToPERX("https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/staging/stage_data.php", $payload, parent::$headerPayload);
-    //                 // print_r($resp);
-    //                 //dd($resp);
-    //                 return response()->json($resp);
-    //             } catch (\Exception $ex) {
-    //                 throw new \Exception("Something went wrong " . $ex->getMessage());
-    //             }
+                    $resp =
+                    // parent::pushToPERX("https://staging-env.perxclm.com/stage-data.php", $payload, parent::$headerPayload);
+                    //parent::pushToPERX("https://firstbankloyalty.perxclm.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
+                    //parent::pushToPERX("https://demo.firstrewards.loyaltysolutionsnigeria.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
+                    parent::pushToPERX("https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/staging/stage_data.php", $payload, parent::$headerPayload);
+                    // print_r($resp);
+                    //dd($resp);
+                    return response()->json($resp);
+                } catch (\Exception $ex) {
+                    throw new \Exception("Something went wrong " . $ex->getMessage());
+                }
 
-    //     }else{
+        }else{
 
-    //         return response()->json([
-    //             "message" => "There are no staging data currently",
-    //             "status" => false
-    //             //"status" => "Not Working"
-    //         ]);
-    //     }
+            return response()->json([
+                "message" => "There are no staging data currently",
+                "status" => false
+                //"status" => "Not Working"
+            ]);
+        }
 
 }
 
