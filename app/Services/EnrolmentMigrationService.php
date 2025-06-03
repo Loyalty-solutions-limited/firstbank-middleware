@@ -80,7 +80,8 @@ public static function migrateEnrolments1()
                     $accDataToPush = array(
                     'Company_username'=>self::$username,//$company_details->username? $company_details->username: 0,
                     'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
-                    'Membership_ID'=>parent::string_encrypt($existingCustomer->cif_id, self::$key,self::$iv),
+                    'Membership_ID'=>$existingCustomer->cif_id,
+                    // 'Membership_ID'=>parent::string_encrypt($existingCustomer->cif_id, self::$key,self::$iv),
                     'Account_number'=>$pendingEnrolment->accountnumber,
                     'API_flag'=>'attachAcountNumber',
 
@@ -108,7 +109,7 @@ public static function migrateEnrolments1()
 
                         'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
 
-                        'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
+                        'Membership_ID'=>$pendingEnrolment->cif_id,
                         // 'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
 
                         'Branch_code'=>$pendingEnrolment->branch_code,
@@ -177,8 +178,8 @@ public static function migrateEnrolments1()
                 // SendNotificationService::sendMail($repsonse['Email_subject'], $repsonse['Email_body'], $repsonse['bcc_email_address']);
                     //   $jen = SendNotificationService::sendMail('Customer Enrolment Notification', EmailDispatcher::buildEnrolmentTemplate(self::$placeholders, $values),'', $pendingEnrolment->email);
 
-                                $log = LogEmails::create(array_merge($mail_payload, ['status' => 0]));
-                                echo json_encode($log);
+                                // $log = LogEmails::create(array_merge($mail_payload, ['status' => 0]));
+                                // echo json_encode($log);
 
                                 if( Enrollment::where('cif_id', $pendingEnrolment->cif_id)->update(['enrollment_status' => 1]))
                                 {
@@ -266,7 +267,7 @@ public static function migrateEnrolments1_old() : string
 
                     'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
 
-                    'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
+                    'Membership_ID'=>$pendingEnrolment->cif_id,
 
                     'Branch_code'=>$pendingEnrolment->branch_code,
 

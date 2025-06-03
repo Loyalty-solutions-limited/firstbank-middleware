@@ -742,6 +742,13 @@ class EnrollmentController extends Controller
         return response()->json($data);
     }
 
+    public function test_trans()
+    {
+        $data = Transaction::limit(10)->get();
+
+        return response()->json($data);
+    }
+
     public function whoAmI2(Request $request){
         //return $request->all();
         // if(!($request->member_reference)) return response()->json([
