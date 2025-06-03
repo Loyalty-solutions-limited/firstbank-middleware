@@ -60,8 +60,9 @@ public static function migrateEnrolments1()
 
         //dd($company_details);
 
-        // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->limit(5);//->get();//->where('tries', '<', 5);//->get();
-        $pendingEnrolments = Enrollment::limit(50)->get();
+        $pendingEnrolments = Enrollment::where('enrollment_status',null)->where('tries', '<=', 11)->limit(5);//->get();//->where('tries', '<', 5);//->get();
+        Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
+        // $pendingEnrolments = Enrollment::limit(50)->get();
 
         // return response()->json(['data' => $pendingEnrolments]);
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
@@ -73,7 +74,6 @@ public static function migrateEnrolments1()
                 //dd($pendingEnrolment);
                 //Enrollment::where('member_reference', $pendingEnrolment->member_reference)->where('enrollment_status',1)->get();
                 $existingCustomer = Enrollment::where('cif_id', $pendingEnrolment->cif_id)->where('enrollment_status',1)->first();
-                Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
                 if($existingCustomer)
                 {
                     //CHECK MEMBER_REFERENCE EXISTS. IF YES, PUSH TO ACCOUNT_NUMBER TABLE ON PERX
