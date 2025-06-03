@@ -40,7 +40,7 @@ class EnrolmentMigrationService extends MigrationService{
     }
 
 
-public static function migrateEnrolments1() : string
+public static function migrateEnrolments1()
 {
         //$this->key = '!QAZXSW@#EDCVFR$';
         //self::$username = 'diamondcustomer';
