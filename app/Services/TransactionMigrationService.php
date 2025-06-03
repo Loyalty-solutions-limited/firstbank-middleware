@@ -28,7 +28,7 @@ class TransactionMigrationService extends MigrationService{
       if($pendingTransactions->count() > 0){
           foreach($pendingTransactions->get() as $pendingTransaction){
             //$pendingTransaction->quantity  = 1;
-            $membership_id_resolved = parent::string_encrypt(parent::resolveMemberReference($pendingTransaction->member_reference), self::$key,self::$iv);
+            $membership_id_resolved = parent::string_encrypt(parent::resolveMemberReference($pendingTransaction->cif_id), self::$key,self::$iv);
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>parent::passwordReturn(),
@@ -44,8 +44,8 @@ class TransactionMigrationService extends MigrationService{
                 'API_flag' => 'stran'
                 );
 
-                //print_r($pendingTransaction->member_reference);
-                $member =  Enrollment::where('member_reference', trim($pendingTransaction->member_reference))->first();
+                //print_r($pendingTransaction->cif_id);
+                $member =  Enrollment::where('cif_id', trim($pendingTransaction->cif_id))->first();
                 //print_r($member);
                 $product_name = json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/get_product_group_name?product_code=".$pendingTransaction->product_code), true);
               //  if (isset($member->first_name)){
@@ -54,13 +54,13 @@ class TransactionMigrationService extends MigrationService{
                 $resp =
                 parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                 print_r($resp);
-				//echo".." . $member->cif_id . $pendingTransaction->member_reference ."<br>";
+				//echo".." . $member->cif_id . $pendingTransaction->cif_id ."<br>";
                 $repsonse = json_decode($resp, true);
             if ($repsonse){
             if ($repsonse['status'] == 1001){
                 //print_r($repsonse);
                 $values[2] = $repsonse['Loyalty_points']?number_format($repsonse['Loyalty_points']):0;
-                $customer_balance = CurlService::makeGet("https://perxapi.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$pendingTransaction->member_reference);//, true); //["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
+                $customer_balance = CurlService::makeGet("https://perxapi.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$pendingTransaction->cif_id);//, true); //["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
                 $customer_balance = json_decode($customer_balance, true);
                 $values[3] = number_format($customer_balance['profile'][0]['Current_balance']);//json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
 
@@ -68,15 +68,15 @@ class TransactionMigrationService extends MigrationService{
                 //SendNotificationService::sendMail($repsonse['Email_subject'], $repsonse['Email_body'], $repsonse['bcc_email_address']);
                 Transaction::where('transaction_reference', $pendingTransaction->transaction_reference)->update(['status' => 1]);
                 if(intval($values[2])>0){
-                    EmailDispatcher::pendMails(parent::resolveMemberReference(trim($pendingTransaction->member_reference)), "YOU JUST EARNED LOYALTY POINTS ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildTransactionTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
+                    EmailDispatcher::pendMails(parent::resolveMemberReference(trim($pendingTransaction->cif_id)), "YOU JUST EARNED LOYALTY POINTS ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildTransactionTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
                 }
-                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->member_reference, 'branch_code'=>$pendingTransaction->branch_code,
+                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->cif_id, 'branch_code'=>$pendingTransaction->branch_code,
                 'status_code'=>$repsonse['status'], 'account_number'=>$pendingTransaction->account_number, 'transaction_date'=>$pendingTransaction->transaction_date, 'status_message'=>$repsonse['Status_message']]);
 
             }else{
-                //Transaction::where('member_reference', $pendingTransaction->member_reference)->update(['tries'=>$pendingTransaction->tries+ 1 ]);
+                //Transaction::where('cif_id', $pendingTransaction->cif_id)->update(['tries'=>$pendingTransaction->tries+ 1 ]);
                 Transaction::where('transaction_reference', $pendingTransaction->transaction_reference)->update(['status' => 3]);
-                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->member_reference, 'branch_code'=>$pendingTransaction->branch_code,
+                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->cif_id, 'branch_code'=>$pendingTransaction->branch_code,
                 'status_code'=>$repsonse['status'], 'status_message'=>$repsonse['Status_message'], 'account_number'=>$pendingTransaction->account_number, 'transaction_date'=>$pendingTransaction->transaction_date]);
 
 
@@ -104,7 +104,7 @@ class TransactionMigrationService extends MigrationService{
       if($pendingTransactions->count() > 0){
           foreach($pendingTransactions->get() as $pendingTransaction){
             //$pendingTransaction->quantity  = 1;
-            $membership_id_resolved = parent::string_encrypt(parent::resolveMemberReference($pendingTransaction->member_reference), self::$key,self::$iv);
+            $membership_id_resolved = parent::string_encrypt(parent::resolveMemberReference($pendingTransaction->cif_id), self::$key,self::$iv);
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>parent::passwordReturn(),
@@ -120,8 +120,8 @@ class TransactionMigrationService extends MigrationService{
                 'API_flag' => 'stran'
                 );
 
-                //print_r($pendingTransaction->member_reference);
-                $member =  Enrollment::where('member_reference', trim($pendingTransaction->member_reference))->first();
+                //print_r($pendingTransaction->cif_id);
+                $member =  Enrollment::where('cif_id', trim($pendingTransaction->cif_id))->first();
                 //print_r($member);
                 $product_name = json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/get_product_group_name?product_code=".$pendingTransaction->product_code), true);
               //  if (isset($member->first_name)){
@@ -130,13 +130,13 @@ class TransactionMigrationService extends MigrationService{
                 $resp =
                 parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                 print_r($resp);
-				//echo".." . $member->cif_id . $pendingTransaction->member_reference ."<br>";
+				//echo".." . $member->cif_id . $pendingTransaction->cif_id ."<br>";
                 $repsonse = json_decode($resp, true);
             if ($repsonse){
             if ($repsonse['status'] == 1001){
                 //print_r($repsonse);
                 $values[2] = $repsonse['Loyalty_points']?number_format($repsonse['Loyalty_points']):0;
-                $customer_balance = CurlService::makeGet("https://perxapi.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$pendingTransaction->member_reference);//, true); //["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
+                $customer_balance = CurlService::makeGet("https://perxapi.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$pendingTransaction->cif_id);//, true); //["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
                 $customer_balance = json_decode($customer_balance, true);
                 $values[3] = number_format($customer_balance['profile'][0]['Current_balance']);//json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
 
@@ -144,15 +144,15 @@ class TransactionMigrationService extends MigrationService{
                 //SendNotificationService::sendMail($repsonse['Email_subject'], $repsonse['Email_body'], $repsonse['bcc_email_address']);
                 Transaction::where('transaction_reference', $pendingTransaction->transaction_reference)->update(['status' => 1]);
                 if(intval($values[2])>0){
-                    EmailDispatcher::pendMails(parent::resolveMemberReference(trim($pendingTransaction->member_reference)), "YOU JUST EARNED LOYALTY POINTS ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildTransactionTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
+                    EmailDispatcher::pendMails(parent::resolveMemberReference(trim($pendingTransaction->cif_id)), "YOU JUST EARNED LOYALTY POINTS ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildTransactionTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
                 }
-                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->member_reference, 'branch_code'=>$pendingTransaction->branch_code,
+                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->cif_id, 'branch_code'=>$pendingTransaction->branch_code,
                 'status_code'=>$repsonse['status'], 'account_number'=>$pendingTransaction->account_number, 'transaction_date'=>$pendingTransaction->transaction_date, 'status_message'=>$repsonse['Status_message']]);
 
             }else{
-                //Transaction::where('member_reference', $pendingTransaction->member_reference)->update(['tries'=>$pendingTransaction->tries+ 1 ]);
+                //Transaction::where('cif_id', $pendingTransaction->cif_id)->update(['tries'=>$pendingTransaction->tries+ 1 ]);
                 Transaction::where('transaction_reference', $pendingTransaction->transaction_reference)->update(['status' => 3]);
-                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->member_reference, 'branch_code'=>$pendingTransaction->branch_code,
+                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->cif_id, 'branch_code'=>$pendingTransaction->branch_code,
                 'status_code'=>$repsonse['status'], 'status_message'=>$repsonse['Status_message'], 'account_number'=>$pendingTransaction->account_number, 'transaction_date'=>$pendingTransaction->transaction_date]);
 
 
@@ -178,12 +178,12 @@ public static function runSpecificTransactions($data){
       $success_count = 0;  $failure_count = 0;
 	  //echo $success_count;
 	  //echo Transaction->all
-      $pendingTransactions = Transaction::whereIn('member_reference', $data);
+      $pendingTransactions = Transaction::whereIn('cif_id', $data);
 	  //echo $pendingTransactions->count(); exit;
       if($pendingTransactions->count() > 0){
           foreach($pendingTransactions->get() as $pendingTransaction){
             //$pendingTransaction->quantity  = 1;
-            $membership_id_resolved = parent::string_encrypt(parent::resolveMemberReference($pendingTransaction->member_reference), self::$key,self::$iv);
+            $membership_id_resolved = parent::string_encrypt(parent::resolveMemberReference($pendingTransaction->cif_id), self::$key,self::$iv);
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>parent::passwordReturn(),
@@ -199,8 +199,8 @@ public static function runSpecificTransactions($data){
                 'API_flag' => 'stran'
                 );
 
-                //print_r($pendingTransaction->member_reference);
-                $member =  Enrollment::where('member_reference', trim($pendingTransaction->member_reference))->first();
+                //print_r($pendingTransaction->cif_id);
+                $member =  Enrollment::where('cif_id', trim($pendingTransaction->cif_id))->first();
                 //print_r($member);
                 $product_name = json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/get_product_group_name?product_code=".$pendingTransaction->product_code), true);
               //  if (isset($member->first_name)){
@@ -209,13 +209,13 @@ public static function runSpecificTransactions($data){
                 $resp =
                 parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                 print_r($resp);
-				//echo".." . $member->cif_id . $pendingTransaction->member_reference ."<br>";
+				//echo".." . $member->cif_id . $pendingTransaction->cif_id ."<br>";
                 $repsonse = json_decode($resp, true);
             if ($repsonse){
             if ($repsonse['status'] == 1001){
                 //print_r($repsonse);
                 $values[2] = $repsonse['Loyalty_points']?number_format($repsonse['Loyalty_points']):0;
-                $customer_balance = CurlService::makeGet("https://perxapi.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$pendingTransaction->member_reference);//, true); //["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
+                $customer_balance = CurlService::makeGet("https://perxapi.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$pendingTransaction->cif_id);//, true); //["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
                 $customer_balance = json_decode($customer_balance, true);
                 $values[3] = number_format($customer_balance['profile'][0]['Current_balance']);//json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
 
@@ -223,15 +223,15 @@ public static function runSpecificTransactions($data){
                 //SendNotificationService::sendMail($repsonse['Email_subject'], $repsonse['Email_body'], $repsonse['bcc_email_address']);
                 Transaction::where('transaction_reference', $pendingTransaction->transaction_reference)->update(['status' => 1]);
                 if(intval($values[2])>0){
-                    EmailDispatcher::pendMails(parent::resolveMemberReference(trim($pendingTransaction->member_reference)), "YOU JUST EARNED LOYALTY POINTS ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildTransactionTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
+                    EmailDispatcher::pendMails(parent::resolveMemberReference(trim($pendingTransaction->cif_id)), "YOU JUST EARNED LOYALTY POINTS ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildTransactionTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
                 }
-                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->member_reference, 'branch_code'=>$pendingTransaction->branch_code,
+                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->cif_id, 'branch_code'=>$pendingTransaction->branch_code,
                 'status_code'=>$repsonse['status'], 'account_number'=>$pendingTransaction->account_number, 'transaction_date'=>$pendingTransaction->transaction_date, 'status_message'=>$repsonse['Status_message']]);
 
             }else{
-                //Transaction::where('member_reference', $pendingTransaction->member_reference)->update(['tries'=>$pendingTransaction->tries+ 1 ]);
+                //Transaction::where('cif_id', $pendingTransaction->cif_id)->update(['tries'=>$pendingTransaction->tries+ 1 ]);
                 Transaction::where('transaction_reference', $pendingTransaction->transaction_reference)->update(['status' => 3]);
-                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->member_reference, 'branch_code'=>$pendingTransaction->branch_code,
+                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->cif_id, 'branch_code'=>$pendingTransaction->branch_code,
                 'status_code'=>$repsonse['status'], 'status_message'=>$repsonse['Status_message'], 'account_number'=>$pendingTransaction->account_number, 'transaction_date'=>$pendingTransaction->transaction_date]);
 
 
@@ -261,7 +261,7 @@ public static function migrateTransaction2():void{
       if($pendingTransactions->count() > 0){
           foreach($pendingTransactions->get() as $pendingTransaction){
             //$pendingTransaction->quantity  = 1;
-            $membership_id_resolved = parent::string_encrypt(parent::resolveMemberReference($pendingTransaction->member_reference), self::$key,self::$iv);
+            $membership_id_resolved = parent::string_encrypt(parent::resolveMemberReference($pendingTransaction->cif_id), self::$key,self::$iv);
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>parent::passwordReturn(),
@@ -277,8 +277,8 @@ public static function migrateTransaction2():void{
                 'API_flag' => 'stran'
                 );
 
-                //print_r($pendingTransaction->member_reference);
-                $member =  Enrollment::where('member_reference', trim($pendingTransaction->member_reference))->first();
+                //print_r($pendingTransaction->cif_id);
+                $member =  Enrollment::where('cif_id', trim($pendingTransaction->cif_id))->first();
                 //print_r($member);
                 $product_name = json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/get_product_group_name?product_code=".$pendingTransaction->product_code), true);
               //  if (isset($member->first_name)){
@@ -287,13 +287,13 @@ public static function migrateTransaction2():void{
                 $resp =
                 parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
                 print_r($resp);
-				//echo".." . $member->cif_id . $pendingTransaction->member_reference ."<br>";
+				//echo".." . $member->cif_id . $pendingTransaction->cif_id ."<br>";
                 $repsonse = json_decode($resp, true);
             if ($repsonse){
             if ($repsonse['status'] == 1001){
                 //print_r($repsonse);
                 $values[2] = $repsonse['Loyalty_points']?number_format($repsonse['Loyalty_points']):0;
-                $customer_balance = CurlService::makeGet("https://perxapi.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$pendingTransaction->member_reference);//, true); //["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
+                $customer_balance = CurlService::makeGet("https://perxapi.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$pendingTransaction->cif_id);//, true); //["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
                 $customer_balance = json_decode($customer_balance, true);
                 $values[3] = number_format($customer_balance['profile'][0]['Current_balance']);//json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"] > 0?json_decode(CurlService::makeGet("https://perxapi2.perxclm.com/api/profile?token=LSLonlypass&membership_id=".$membership_id_resolved), true)["profile"][0]["Current_balance"]:0.00;
 
@@ -301,15 +301,15 @@ public static function migrateTransaction2():void{
                 //SendNotificationService::sendMail($repsonse['Email_subject'], $repsonse['Email_body'], $repsonse['bcc_email_address']);
                 Transaction::where('transaction_reference', $pendingTransaction->transaction_reference)->update(['status' => 1]);
                 if(intval($values[2])>0){
-                    EmailDispatcher::pendMails(parent::resolveMemberReference(trim($pendingTransaction->member_reference)), "YOU JUST EARNED LOYALTY POINTS ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildTransactionTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
+                    EmailDispatcher::pendMails(parent::resolveMemberReference(trim($pendingTransaction->cif_id)), "YOU JUST EARNED LOYALTY POINTS ON THE FIDELITY GREEN REWARDS PROGRAMME", EmailDispatcher::buildTransactionTemplate(self::$placeholders, $values), 'no-reply@greenrewards.com');
                 }
-                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->member_reference, 'branch_code'=>$pendingTransaction->branch_code,
+                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->cif_id, 'branch_code'=>$pendingTransaction->branch_code,
                 'status_code'=>$repsonse['status'], 'account_number'=>$pendingTransaction->account_number, 'transaction_date'=>$pendingTransaction->transaction_date, 'status_message'=>$repsonse['Status_message']]);
 
             }else{
-                //Transaction::where('member_reference', $pendingTransaction->member_reference)->update(['tries'=>$pendingTransaction->tries+ 1 ]);
+                //Transaction::where('cif_id', $pendingTransaction->cif_id)->update(['tries'=>$pendingTransaction->tries+ 1 ]);
                 Transaction::where('transaction_reference', $pendingTransaction->transaction_reference)->update(['status' => 3]);
-                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->member_reference, 'branch_code'=>$pendingTransaction->branch_code,
+                TransactionReportLog::create(['customer_reference'=>$pendingTransaction->cif_id, 'branch_code'=>$pendingTransaction->branch_code,
                 'status_code'=>$repsonse['status'], 'status_message'=>$repsonse['Status_message'], 'account_number'=>$pendingTransaction->account_number, 'transaction_date'=>$pendingTransaction->transaction_date]);
 
 
@@ -343,12 +343,12 @@ public static function rollbackTransactions($id)
           foreach($pendingTransactions->get() as $pendingTransaction){
             //$pendingTransaction->quantity  = 1;
             //dd($pendingTransaction);
-            // $membership_id_resolved = parent::resolveMemberReference($pendingTransaction->member_reference) ?? '8731110';
+            // $membership_id_resolved = parent::resolveMemberReference($pendingTransaction->cif_id) ?? '8731110';
             //dd($membership_id_resolved);
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>parent::passwordReturn(),
-                'Membership_ID'=>$pendingTransaction->member_reference,
+                'Membership_ID'=>$pendingTransaction->cif_id,
                 // 'Membership_ID'=>$membership_id_resolved ?? '8711130',
                 'Transaction_Date'=>$pendingTransaction->transaction_date,
                 'Transaction_Type_code'=>$pendingTransaction->transaction_type,
@@ -361,7 +361,7 @@ public static function rollbackTransactions($id)
                 'API_flag' => 'stran',
                 'id'=>$pendingTransaction->id
                 );
-                $pendingTransaction->update(['status' => 1]);
+                // $pendingTransaction->update(['status' => 1]);
 				array_push($payload, $arrayToPush);
 		  }
 
@@ -405,7 +405,7 @@ public static function rollbackTransactions_old($id)
       if($pendingTransactions->count() > 0){
           foreach($pendingTransactions->get() as $pendingTransaction){
             //$pendingTransaction->quantity  = 1;
-            $membership_id_resolved = parent::resolveMemberReference($pendingTransaction->member_reference);
+            $membership_id_resolved = parent::resolveMemberReference($pendingTransaction->cif_id);
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>parent::passwordReturn(),

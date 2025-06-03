@@ -57,7 +57,7 @@ if (curl_errno($ch)) {
 
     public static function string_decrypt($encryption, $key, $iv) : string{
          $ciphering = "AES-128-CTR";
-        $decryption_iv = '1234567891011121';
+        $decryption_iv = '1234567891011121'; //1234567891011121
         $key = "SmoothJay";
         $options = 0;
         $decryption=openssl_decrypt($encryption, $ciphering,
