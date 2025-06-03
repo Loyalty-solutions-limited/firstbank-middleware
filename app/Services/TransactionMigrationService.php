@@ -375,9 +375,9 @@ public static function rollbackTransactions($id)
                     //parent::pushToPERX("https://firstbankloyalty.perxclm.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
                     //parent::pushToPERX("https://demo.firstrewards.loyaltysolutionsnigeria.com/stage_data/stage_data.php", $payload, parent::$headerPayload);
                     parent::pushToPERX("https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/staging/stage_data.php", $payload, parent::$headerPayload);
-                    // print_r($resp);
+                    print_r($resp);
                     //dd($resp);
-                    return response()->json($resp);
+                    // return response()->json($resp);
                 } catch (\Exception $ex) {
                     throw new \Exception("Something went wrong " . $ex->getMessage());
                 }
