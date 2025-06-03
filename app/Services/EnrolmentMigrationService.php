@@ -60,8 +60,8 @@ public static function migrateEnrolments1()
 
         //dd($company_details);
 
-        $pendingEnrolments = Enrollment::where('enrollment_status',null)->where('tries', '<=', 11)->limit(5);//->get();//->where('tries', '<', 5);//->get();
-        Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
+        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 11)->limit(5);//->get();//->where('tries', '<', 5);//->get();
+        // Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
         // $pendingEnrolments = Enrollment::limit(50)->get();
 
         // return response()->json(['data' => $pendingEnrolments]);
