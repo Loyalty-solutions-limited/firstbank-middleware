@@ -363,6 +363,7 @@ public static function rollbackTransactions($id)
                 'API_flag' => 'stran',
                 'id'=>$pendingTransaction->id
                 );
+                dd($arrayToPush);
                 $pendingTransaction->update(['status' => 1]);
 				array_push($payload, $arrayToPush);
 		  }
