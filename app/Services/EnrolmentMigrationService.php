@@ -129,7 +129,7 @@ public static function migrateEnrolments1()
                     } catch (\Exception $ex) {
                         throw new \Exception("Something went wrong " . $ex->getMessage());
                     }
-                    dd($resp);
+                    print_r($resp); return;
                     if (parent::isJSON($resp))
                     {
                         $repsonse = json_decode($resp, true);
