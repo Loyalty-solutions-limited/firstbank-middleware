@@ -12,7 +12,25 @@ use Illuminate\Support\Facades\Mail;
 class LogEmailsController extends Controller
 {
     public function log(LogEmailsRequest $request){
-        $insert_log = LogEmails::create(array_merge($request->all(), ['status' => 0]));
+        // $insert_log = LogEmails::create(array_merge($request->all(), [
+        //     'status' => 0,
+        //     'first_name' => '',
+        //     'last_name' => '',
+        //     'email' => '',
+        //     'trans_ref' =>
+        // ]));
+        $insert_log = new LogEmails();
+        $insert_log->status = 0;
+        $insert_log->first_name = '';
+        $insert_log->last_name = '';
+        $insert_log->email = '';
+        $insert_log->trans_ref = $request->trans_ref ?? '';
+        $insert_log->email_type = $request->email_type;
+        $insert_log->body = $request->body;
+        $insert_log->subject = $request->subject;
+        $insert_log->membership_id = $request->acid;
+        $insert_log->save();
+        
         return response()->json("Email Logged Successfully");
     }
 //ask what criteria to get the mails from log email
@@ -27,7 +45,7 @@ class LogEmailsController extends Controller
                     echo json_encode($response);
                     if($response['response'] == 1){
                         $update_status = LogEmails::where('id',$data->id)->update(['status' => 1]);
-                        echo "Email Sent Successfullt";
+                        echo "Email Sent Successfully";
                     }else{
                         echo "Email failed to send";
                     }
