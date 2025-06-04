@@ -125,11 +125,11 @@ public static function migrateEnrolments1()
                     );
                     try {
                         $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
-                        // echo $resp;
+                        echo $resp;
                     } catch (\Exception $ex) {
                         throw new \Exception("Something went wrong " . $ex->getMessage());
                     }
-                    // print_r($resp); return;
+                    print_r($resp); return;
                     if (parent::isJSON($resp))
                     {
                         $repsonse = json_decode($resp, true);
