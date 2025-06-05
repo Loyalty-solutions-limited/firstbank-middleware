@@ -336,8 +336,8 @@ public static function rollbackTransactions($id)
 	  //echo Transaction->all
 	  $payload = array(); //rollback emails till 7th of feb 2023
     //   $pendingTransactions = Transaction::limit(50)->get();
-      $pendingTransactions = Transaction::where('status', '=', 0)->limit(5);
-    //   return $pendingTransactions;
+      $pendingTransactions = Transaction::where('status', '=', 0)->limit(500);
+    //   return $pendingTransactions->count();
     //   dd($pendingTransactions->count());
 	  //echo $pendingTransactions->count(); exit;
     //   return response()->json(['data' => $pendingTransactions]);

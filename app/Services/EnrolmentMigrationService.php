@@ -15,6 +15,7 @@ use Illuminate\Mail\PendingMail;
 use App\Services\EmailDispatcher;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Migrations\Migration;
 
 
@@ -60,16 +61,16 @@ public static function migrateEnrolments1()
 
         //dd($company_details);
 
-        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 11)->limit(50);//->get();//->where('tries', '<', 5);//->get();
+        $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 11)->limit(500)->get();//->where('tries', '<', 5);//->get();
         // Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
         // $pendingEnrolments = Enrollment::limit(50)->get();
 
         // return response()->json(['data' => $pendingEnrolments]);
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
-        return $pendingEnrolments->count();
+        // return $pendingEnrolments;
        if ($pendingEnrolments->count()>0)
        {
-            foreach($pendingEnrolments->get() as $pendingEnrolment)
+            foreach($pendingEnrolments as $pendingEnrolment)
             {
                 //dd($pendingEnrolment);
                 //Enrollment::where('member_reference', $pendingEnrolment->member_reference)->where('enrollment_status',1)->get();
@@ -95,7 +96,7 @@ public static function migrateEnrolments1()
                     }
                     // array_push($data, $accDataToPush);
                 } else {
-                    $pendingEnrolment->password ? $pendingEnrolment->password = $pendingEnrolment->password : $pendingEnrolment->password = '1234';
+                    $pendingEnrolment->password ? $pendingEnrolment->password = Hash::make($pendingEnrolment->password) : $pendingEnrolment->password = Hash::make(1234);
 
                     $pendingEnrolment->pin ? $pendingEnrolment->pin = $pendingEnrolment->pin : $pendingEnrolment->pin = '0000';
 
@@ -115,7 +116,7 @@ public static function migrateEnrolments1()
                         'Branch_code'=>$pendingEnrolment->branch_code,
 
                         //'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:'1234',
-                        'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:1234,
+                        'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:Hash::make(1234),
                         // 'auto_gen_password'=>$pendingEnrolment->password?Hash::make($pendingEnrolment->password):Hash::make(1234),
 
                         'auto_gen_pin'=>$pendingEnrolment->pin?$pendingEnrolment->pin:'0000',
@@ -125,11 +126,11 @@ public static function migrateEnrolments1()
                     );
                     try {
                         $resp = parent::pushToPERX(parent::$url, $arrayToPush, parent::$headerPayload);
-                        echo $resp;
+                        // echo $resp;
                     } catch (\Exception $ex) {
                         throw new \Exception("Something went wrong " . $ex->getMessage());
                     }
-                    print_r($resp); return;
+                    print_r($resp);// return;
                     if (parent::isJSON($resp))
                     {
                         $repsonse = json_decode($resp, true);

@@ -12,8 +12,8 @@ class Enrollment extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table ="LOYAL_ENROLLMENT";
-    // protected $table ="enrollments";
+    // protected $table ="LOYAL_ENROLLMENT";
+    protected $table ="enrollments";
 
     protected $fillable = [
         'first_name',
