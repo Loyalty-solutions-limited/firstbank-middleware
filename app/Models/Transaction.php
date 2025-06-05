@@ -9,8 +9,8 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    // protected $table ="QUALIFIED_TRANSACTIONS";
-    protected $table ="transactions";
+    protected $table ="QUALIFIED_TRANSACTIONS";
+    // protected $table ="transactions";
 
     protected $guarded = ['id'];
 
