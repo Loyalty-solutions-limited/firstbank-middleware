@@ -66,7 +66,7 @@ public static function migrateEnrolments1()
 
         // return response()->json(['data' => $pendingEnrolments]);
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
-        //dd($pendingEnrolments->count());
+        dd($pendingEnrolments->count());
        if ($pendingEnrolments->count()>0)
        {
             foreach($pendingEnrolments->get() as $pendingEnrolment)
