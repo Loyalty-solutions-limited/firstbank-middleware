@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('trigger:enrollment')->everyFiveMinutes()->runInBackground();
         $schedule->command('trigger:transaction')->everyFiveMinutes()->runInBackground();
-        $schedule->command('trigger:email_log')->everyFiveMinutes()->runInBackground();
+        // $schedule->command('trigger:email_log')->everyFiveMinutes()->runInBackground();
     }
 
     /**

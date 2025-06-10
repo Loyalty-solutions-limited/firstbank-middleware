@@ -40,7 +40,7 @@ class processEnrollment extends Command
     {
         $url = "https://172.16.26.8";
 
-        return Log::info(self::make_curl($url . "/enrollment"));
+        return Log::info(self::make_curl($url . "/runcron2?API_flag=enrol"));
     }
 
     public static function make_curl($url)
