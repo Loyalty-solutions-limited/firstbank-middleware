@@ -66,7 +66,7 @@ if (curl_errno($ch)) {
     }
 
 public static function passwordReturn(){
-    return self::string_encrypt('Di@mond10$#', self::$key,self::$iv);
+    return self::string_encrypt('ssw0rd20', self::$key,self::$iv);
 }
    // self::$password = parent::string_encrypt('Di@mond10$#', self::$key,self::$iv);
 
