@@ -63,17 +63,22 @@ class LogEmailsController extends Controller
         $data = array("sender"=>"noreply@firstbank", "from"=> "noreply@firstbank.ng","to"=>$request->email, "subject"=>$request->subject, "body"=> $request->body);
         $url = env('POINTS_TO_CASH_URL') . "email/send-mail";
         // $response = CurlService::doCURL($url, $request->all());
-        // return $url;
-       $response = json_decode($this->makeCurl($url, 'POST', $request->all()));
-        return $response;
-        echo json_decode($response);
-            if($response['responseCode'] == "00"){
-                // $update_status = LogEmails::where('id',$data->id)->update(['status' => 1]);
-            $insert_log = LogEmails::create(array_merge($request->all(), ['status' => 1]));
-                echo "Email Sent Successfully";
-            }else{
-                echo "Email failed to send";
-            }
+        try{
+
+            echo $url;
+           $response = json_decode($this->makeCurl($url, 'POST', $request->all()));
+            return $response;
+            echo json_decode($response);
+                if($response['responseCode'] == "00"){
+                    // $update_status = LogEmails::where('id',$data->id)->update(['status' => 1]);
+                $insert_log = LogEmails::create(array_merge($request->all(), ['status' => 1]));
+                    echo "Email Sent Successfully";
+                }else{
+                    echo "Email failed to send";
+                }
+        }catch(\Exception $ex){
+            throw new \Exception("something went wrong " . $ex->getMessage());
+        }
     }
 
 
