@@ -105,6 +105,8 @@ class LogEmailsController extends Controller
         $headers = [
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
+        "AppId: ".config("externalservices.POINTS_TO_CASH_APPID"),
+        "AppKey: ".config("externalservices.POINTS_TO_CASH_APPKEY"),
         // 'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
         ];
 
