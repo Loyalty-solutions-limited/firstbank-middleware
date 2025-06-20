@@ -59,7 +59,7 @@ class LogEmailsController extends Controller
         }
     }
 
-    public function sendMail(LogEmailsRequest $request)
+    public function sendMail(Request $request)
     {
         $data = array("sender"=>"noreply@firstbank", "from"=> "noreply@firstbank.ng","to"=>$request->email, "subject"=>$request->subject, "body"=> $request->body);
         $url = env('POINTS_TO_CASH_URL') . "email/send-mail";
@@ -81,6 +81,15 @@ class LogEmailsController extends Controller
         }catch(\Exception $ex){
             throw new \Exception("something went wrong " . $ex->getMessage());
         }
+    }
+
+    public function test_email()
+    {
+        $url = "https://10.2.101.204";
+
+        $response = $this->makeCurl($url, 'GET', "");
+
+        return $response;
     }
 
     public function sendMailGuzzle(LogEmailsRequest $request)

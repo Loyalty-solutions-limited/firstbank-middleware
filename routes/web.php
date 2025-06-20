@@ -81,6 +81,8 @@ Route::post('/send-email-guzzle', [LogEmailsController::class, 'sendMailGuzzle']
 Route::get('/get-mail-parameters', [LogEmailsController::class, 'getMailParameters']);
 Route::get('/test-route', [EnrollmentController::class, 'test_db']);
 Route::get('/trans-test', [EnrollmentController::class, 'test_trans']);
+Route::get('/test_email_service', [LogEmailsController::class, 'test_email']);
+// Route::get('/');
 Route::get('stran2', function(){
 	// return TransactionMigrationService::migrateTransaction2();
 	return TMS::migrateTransaction2();
