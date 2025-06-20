@@ -112,7 +112,7 @@ class LogEmailsController extends Controller
 
         print_r($headers);
 
-        $request = new GuzzleRequest('POST', $url, $headers);
+        $request = new GuzzleRequest('POST', $url, $headers, $request->all());
         $res = $client->sendAsync($request)->wait();
         echo $res->getBody();
 
