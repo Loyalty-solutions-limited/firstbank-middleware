@@ -99,9 +99,9 @@ class LogEmailsController extends Controller
         $url = env('POINTS_TO_CASH_URL') . "email/send-mail";
 
 
-        $res = Http::withOptions(['verify' => false])->post($url);
+        // $res = Http::withOptions(['verify' => false])->post($url);
 
-        $client = new Client();
+        $client = new Client(['verify' => false]);
         $headers = [
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
