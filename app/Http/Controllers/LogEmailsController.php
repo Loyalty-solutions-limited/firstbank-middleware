@@ -63,7 +63,7 @@ class LogEmailsController extends Controller
         $data = array("sender"=>"noreply@firstbank", "from"=> "noreply@firstbank.ng","to"=>$request->email, "subject"=>$request->subject, "body"=> $request->body);
         $url = env('POINTS_TO_CASH_URL') . "email/send-mail";
         // $response = CurlService::doCURL($url, $request->all());
-        return $url;
+        // return $url;
        $response = json_decode($this->makeCurl($url, 'POST', $request->all()));
         return $response;
         echo json_decode($response);
@@ -130,6 +130,9 @@ class LogEmailsController extends Controller
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
         CURLOPT_TIMEOUT => 0,
+        // CURLOPT_SETOPT => false,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => $action,
