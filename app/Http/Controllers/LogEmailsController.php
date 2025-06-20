@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EmailRequest;
-use App\Http\Requests\LogEmailsRequest;
 use App\Models\LogEmails;
-use App\Services\CurlService;
 use Illuminate\Http\Request;
+use App\Services\CurlService;
+use App\Http\Requests\EmailRequest;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\LogEmailsRequest;
 
 class LogEmailsController extends Controller
 {
@@ -65,8 +66,9 @@ class LogEmailsController extends Controller
         // $response = CurlService::doCURL($url, $request->all());
         try{
 
-            echo $url;
-           $response = json_decode($this->makeCurl($url, 'POST', $request->all()));
+            // echo $url;
+        //    $response = json_decode($this->makeCurl($url, 'POST', $request->all()));
+           $response = $this->makeCurl($url, 'POST', $request->all());
             return $response;
             echo json_decode($response);
                 if($response['responseCode'] == "00"){
@@ -79,6 +81,26 @@ class LogEmailsController extends Controller
         }catch(\Exception $ex){
             throw new \Exception("something went wrong " . $ex->getMessage());
         }
+    }
+
+    public function sendMailGuzzle(LogEmailsRequest $request)
+    {
+        $url = env('POINTS_TO_CASH_URL') . "email/send-mail";
+
+
+        $response = Http::withoutVerifying()
+            ->withHeaders([
+                'Accept' => 'application/json',
+                "AppId: ".config("externalservices.POINTS_TO_CASH_APPID"),
+                "AppKey: ".config("externalservices.POINTS_TO_CASH_APPKEY"),
+                'Content-Type: application/json',
+                ])
+            ->withOptions(["verify"=>false])
+            ->post($url, $request->all());
+
+        return $response;
+
+
     }
 
 
