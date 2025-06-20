@@ -63,6 +63,7 @@ class LogEmailsController extends Controller
         $data = array("sender"=>"noreply@firstbank", "from"=> "noreply@firstbank.ng","to"=>$request->email, "subject"=>$request->subject, "body"=> $request->body);
         $url = env('POINTS_TO_CASH_URL') . "email/send-mail";
         // $response = CurlService::doCURL($url, $request->all());
+        return $url;
        $response = json_decode($this->makeCurl($url, 'POST', $request->all()));
         return $response;
         echo json_decode($response);

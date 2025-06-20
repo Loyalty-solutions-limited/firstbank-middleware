@@ -111,6 +111,7 @@ public static function migrateEnrolments1()
                         'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
 
                         'Membership_ID'=>$pendingEnrolment->cif_id,
+                        'Acid' => $pendingEnrolment->acid,
                         // 'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
 
                         'Branch_code'=>$pendingEnrolment->branch_code,
