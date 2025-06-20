@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use App\Models\LogEmails;
 use Illuminate\Http\Request;
 use App\Services\CurlService;
@@ -9,6 +10,7 @@ use App\Http\Requests\EmailRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\LogEmailsRequest;
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
 
 class LogEmailsController extends Controller
 {
@@ -97,17 +99,18 @@ class LogEmailsController extends Controller
         $url = env('POINTS_TO_CASH_URL') . "email/send-mail";
 
 
-        $response = Http::withoutVerifying()
-            ->withHeaders([
-                'Accept' => 'application/json',
-                "AppId: ".config("externalservices.POINTS_TO_CASH_APPID"),
-                "AppKey: ".config("externalservices.POINTS_TO_CASH_APPKEY"),
-                'Content-Type: application/json',
-                ])
-            ->withOptions(["verify"=>false])
-            ->post($url, $request->all());
+        $res = Http::withOptions(['verify' => false])->post($url);
 
-        return $response;
+        $client = new Client();
+        $headers = [
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        // 'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
+        ];
+
+        $request = new GuzzleRequest('POST', $url, $headers);
+        $res = $client->sendAsync($request)->wait();
+        echo $res->getBody();
 
 
     }
