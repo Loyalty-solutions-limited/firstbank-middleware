@@ -110,10 +110,10 @@ class LogEmailsController extends Controller
         'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
         ];
 
-        print_r($headers);
+        // print_r($headers);
 
-        $request = new GuzzleRequest('POST', $url, $headers, $request->all());
-        $res = $client->sendAsync($request)->wait();
+        $request = new GuzzleRequest('POST', $url, $headers, json_encode($request->all()));
+        $res = $client->postAsync($request)->wait();
         echo $res->getBody();
 
 
