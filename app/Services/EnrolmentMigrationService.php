@@ -4,18 +4,21 @@ namespace App\Services;
 
 //ini_set('memory_limit', '128M');
 
+use GuzzleHttp\Client;
+
 use App\Models\LogEmails;
 
 use App\Models\Enrollment;
 
+use Illuminate\Support\Str;
+
 use App\Models\EnrolReportLog;
 
 use Illuminate\Mail\PendingMail;
-
 use App\Services\EmailDispatcher;
-
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Illuminate\Database\Migrations\Migration;
 
 
@@ -185,6 +188,39 @@ public static function migrateEnrolments1()
 
                                 if( Enrollment::where('cif_id', $pendingEnrolment->cif_id)->update(['enrollment_status' => 1]))
                                 {
+                                    $values = [
+                                        'membership_id' => $arrayToPush['Membership_ID'],
+                                        'program_name' => "FIRST BANK LOYALTY PROGRAM",
+                                        'currency_name' => "FirstCoin",
+                                        'password' => $arrayToPush['auto_gen_password'],
+                                        'pin' => $arrayToPush['auto_gen_pin'],
+                                        'link' => 'https://firstrewards.firstbanknigeria.com/',
+                                    ];
+
+                                    $placeholders = [
+                                        '$membershipID',
+                                        '$LoyaltyProgramName',
+                                        '$CurrencyName',
+                                        '$Password',
+                                        '$Pin',
+                                        '$here'
+                                    ];
+
+                                    $data = [
+                                        'body' => parent::buildEnrolmentTemplate($placeholders, $values),
+                                        'acid' => $pendingEnrolment->acid,
+                                        'requestId' => Str::random(14),
+                                        'isBodyHtml' => true,
+                                        'title' => "FLEX BIG WITH FIRST BANK LOYALTY PROGRAM",
+                                        'fromAddress' => env('MAIL_FROM'),
+                                        'sendPdfAttachment' => false,
+                                        'pdfAttachmentBody' => null
+                                    ];
+
+                                    $sendmail = parent::sendMailGuzzle($data);
+
+                                    print_r($sendmail);
+
                                     $data['message'] = 'data migrated ' . $success_count;
                                 }
                                 else{
