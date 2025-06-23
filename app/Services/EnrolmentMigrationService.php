@@ -64,7 +64,7 @@ public static function migrateEnrolments1()
 
         //dd($company_details);
 
-        $pendingEnrolments = Enrollment::where('enrollment_status','0')->where('tries', '<=', 11)->limit(100)->get();//->where('tries', '<', 5);//->get();
+        $pendingEnrolments = Enrollment::where('enrollment_status',1)->where('tries', '<=', 11)->limit(100)->get();//->where('tries', '<', 5);//->get();
         // Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
         // $pendingEnrolments = Enrollment::limit(50)->get();
 
