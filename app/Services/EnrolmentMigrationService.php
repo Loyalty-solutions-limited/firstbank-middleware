@@ -66,7 +66,7 @@ public static function migrateEnrolments1()
         //dd($company_details);
 
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 11)->limit(100)->get();//->where('tries', '<', 5);//->get();
-        $pendingEnrolments = DB::table('enrollments')
+        $pendingEnrolments = DB::table('LOYAL_ENROLLMENT')
                                 ->where('enrollment_status', 0)
                                 ->where('tries', '<=', 10)
                                 ->limit(100)
