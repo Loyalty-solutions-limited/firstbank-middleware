@@ -66,17 +66,17 @@ public static function migrateEnrolments1()
         //dd($company_details);
 
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 11)->limit(100)->get();//->where('tries', '<', 5);//->get();
-        $pendingEnrolments = DB::table('LOYAL_ENROLLMENT')
-                                ->where('enrollment_status', 0)
+        $pendingEnrolments = DB::table('enrollments')
+                                ->where('LOYAL_ENROLLMENT', 0)
                                 ->where('tries', '<=', 10)
-                                ->limit(100)
+                                ->limit(300)
                                 ->get();
         // Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
         // $pendingEnrolments = Enrollment::limit(50)->get();
 
         // return response()->json(['data' => $pendingEnrolments]);
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
-        return $pendingEnrolments->count();
+        // return $pendingEnrolments->count();
        if ($pendingEnrolments->count()>0)
        {
             foreach($pendingEnrolments as $pendingEnrolment)

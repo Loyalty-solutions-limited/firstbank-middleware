@@ -100,7 +100,7 @@ public static function sendMailGuzzle($request)
         'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
         ];
 
-        print_r(json_encode($request->all()));
+        // print_r(json_encode($request->all()));
 
         $request = new GuzzleRequest('POST', $url, $headers, json_encode($request));
         $res = $client->sendAsync($request)->wait();
