@@ -16,6 +16,7 @@ use App\Models\EnrolReportLog;
 
 use Illuminate\Mail\PendingMail;
 use App\Services\EmailDispatcher;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Psr7\Request as GuzzleRequest;
@@ -64,7 +65,12 @@ public static function migrateEnrolments1()
 
         //dd($company_details);
 
-        $pendingEnrolments = Enrollment::where('enrollment_status','1')->where('tries', '<=', 11)->limit(100)->get();//->where('tries', '<', 5);//->get();
+        // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 11)->limit(100)->get();//->where('tries', '<', 5);//->get();
+        $pendingEnrolments = DB::table('enrollments')
+                                ->where('enrollment_status', 0)
+                                ->where('tries', '<=', 10)
+                                ->limit(100)
+                                ->get();
         // Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
         // $pendingEnrolments = Enrollment::limit(50)->get();
 
