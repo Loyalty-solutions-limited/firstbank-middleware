@@ -179,7 +179,7 @@ public static function migrateEnrolments1()
 
                                 $values = array($pendingEnrolment->first_name, $pendingEnrolment->last_name, $pendingEnrolment->cif_id, $pendingEnrolment->password, parent::$program, parent::$link,$pendingEnrolment->pin);
                                 $mail_payload = [
-                                    'subject' => 'FLEX BIG ON THE FIRSTBANK GREEN REWARDS PROGRAMME',
+                                    'subject' => 'FLEX BIG ON THE FIRSTBANK LOYALTY PROGRAMME',
                                     'email_type'=> 'Enrollment',
                                     'body' => $values,
                                     'email' => $pendingEnrolment->email,
@@ -218,7 +218,7 @@ public static function migrateEnrolments1()
                                         'acid' => $pendingEnrolment->accountnumber,
                                         'requestId' => mt_rand(),
                                         'isBodyHtml' => true,
-                                        'title' => "FLEX BIG WITH FIRST BANK LOYALTY PROGRAM",
+                                        'title' => "FLEX BIG WITH FIRST BANK LOYALTY PROGRAMME",
                                         'fromAddress' => env('MAIL_FROM'),
                                         'sendPdfAttachment' => false,
                                         'pdfAttachmentBody' => null
