@@ -216,7 +216,7 @@ public static function migrateEnrolments1()
                                     $data = [
                                         'body' => parent::buildEnrolmentTemplate($placeholders, $values),
                                         'acid' => $pendingEnrolment->accountnumber,
-                                        'requestId' => mt_rand(),
+                                        'requestId' => (string) mt_rand(),
                                         'isBodyHtml' => true,
                                         'title' => "FLEX BIG WITH FIRST BANK LOYALTY PROGRAMME",
                                         'fromAddress' => env('MAIL_FROM'),
