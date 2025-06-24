@@ -113,6 +113,7 @@ public static function migrateEnrolments1()
                     $pendingEnrolment->email ? $pendingEnrolment->email = $pendingEnrolment->email : $pendingEnrolment->email = $pendingEnrolment->cif_id . '@noemail.com';
 
                     $pendingEnrolment->branch_code ? $pendingEnrolment->branch_code = $pendingEnrolment->branch_code : $pendingEnrolment->branch_code = '000';
+                    $default_password = 1234;
 
                     $arrayToPush = array(
 
@@ -127,7 +128,7 @@ public static function migrateEnrolments1()
                         'Branch_code'=>$pendingEnrolment->branch_code,
 
                         //'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:'1234',
-                        'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:Hash::make(1234),
+                        'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:Hash::make($default_password),
                         // 'auto_gen_password'=>$pendingEnrolment->password?Hash::make($pendingEnrolment->password):Hash::make(1234),
 
                         'auto_gen_pin'=>$pendingEnrolment->pin?$pendingEnrolment->pin:'0000',
@@ -199,7 +200,7 @@ public static function migrateEnrolments1()
                                         'membership_id' => $arrayToPush['Membership_ID'],
                                         'program_name' => "FIRST BANK LOYALTY PROGRAMME",
                                         'currency_name' => "FirstCoin",
-                                        'password' => $arrayToPush['auto_gen_password'],
+                                        'password' => $default_password,
                                         'pin' => $arrayToPush['auto_gen_pin'],
                                         'link' => 'https://firstrewards.firstbanknigeria.com/',
                                     ];
