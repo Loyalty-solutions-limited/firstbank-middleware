@@ -76,7 +76,7 @@ public static function migrateEnrolments1()
 
         // return response()->json(['data' => $pendingEnrolments]);
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
-        return $pendingEnrolments;
+        // return $pendingEnrolments;
        if ($pendingEnrolments->count()>0)
        {
             foreach($pendingEnrolments->unique('cif_id') as $pendingEnrolment)
@@ -120,7 +120,7 @@ public static function migrateEnrolments1()
                         'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
 
                         'Membership_ID'=>$pendingEnrolment->cif_id,
-                        'Acid' => $pendingEnrolment->acid,
+                        'Acid' => $pendingEnrolment->accountnumber,
                         // 'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
 
                         'Branch_code'=>$pendingEnrolment->branch_code,
@@ -214,7 +214,7 @@ public static function migrateEnrolments1()
 
                                     $data = [
                                         'body' => parent::buildEnrolmentTemplate($placeholders, $values),
-                                        'acid' => $pendingEnrolment->acid,
+                                        'acid' => $pendingEnrolment->accountnumber,
                                         'requestId' => Str::random(14),
                                         'isBodyHtml' => true,
                                         'title' => "FLEX BIG WITH FIRST BANK LOYALTY PROGRAM",
