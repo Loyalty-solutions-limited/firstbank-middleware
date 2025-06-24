@@ -84,7 +84,8 @@ public static function migrateEnrolments1()
             {
                 // dd($pendingEnrolments->unique('cif_id'));
                 //Enrollment::where('member_reference', $pendingEnrolment->member_reference)->where('enrollment_status',1)->get();
-                $existingCustomer = Enrollment::where('cif_id', $pendingEnrolment->cif_id)->where('enrollment_status',1)->first();
+                // $existingCustomer = Enrollment::where('cif_id', $pendingEnrolment->cif_id)->where('enrollment_status',1)->first();
+                $existingCustomer = false;
                 if($existingCustomer)
                 {
                     //CHECK MEMBER_REFERENCE EXISTS. IF YES, PUSH TO ACCOUNT_NUMBER TABLE ON PERX

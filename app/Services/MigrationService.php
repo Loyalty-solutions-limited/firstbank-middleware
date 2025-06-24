@@ -441,7 +441,7 @@ public static function buildEnrolmentTemplate(array $placeholders, array $values
                 <section id="message-content">
 
                     <div id="template-name-area">
-                        <p>Dear FirstName LastName ($membershipID)</p>
+                        <p>Dear {FirstName} {LastName} ($membershipID)</p>
                     <p>We are excited to announce the launch of our new Customer Loyalty Program $LoyaltyProgramName brought to you by FirstBank. We have lots of exciting and exclusive rewards to say ‘Thank You’ for your continuous patronage. </p>
             <p>The $LoyaltyProgramName allows you to earn loyalty points called $CurrencyName, enjoy discounts from various merchants across the country, and many more benefits.</p>
         <p>Please note that your item(s) would be shipped to the indicated address within 15 working days for delivery.</p>
