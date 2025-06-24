@@ -66,8 +66,8 @@ public static function migrateEnrolments1()
         //dd($company_details);
 
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 11)->limit(100)->get();//->where('tries', '<', 5);//->get();
-        $pendingEnrolments = DB::table('enrollments')
-                                ->where('LOYAL_ENROLLMENT', 0)
+        $pendingEnrolments = DB::table('LOYAL_ENROLLMENT')
+                                ->where('enrollment_status', 0)
                                 ->where('tries', '<=', 10)
                                 ->limit(300)
                                 ->get();
@@ -79,9 +79,9 @@ public static function migrateEnrolments1()
         // return $pendingEnrolments->count();
        if ($pendingEnrolments->count()>0)
        {
-            foreach($pendingEnrolments as $pendingEnrolment)
+            foreach($pendingEnrolments->unique('cif_id') as $pendingEnrolment)
             {
-                //dd($pendingEnrolment);
+                // dd($pendingEnrolments->unique('cif_id'));
                 //Enrollment::where('member_reference', $pendingEnrolment->member_reference)->where('enrollment_status',1)->get();
                 $existingCustomer = Enrollment::where('cif_id', $pendingEnrolment->cif_id)->where('enrollment_status',1)->first();
                 if($existingCustomer)
@@ -196,7 +196,7 @@ public static function migrateEnrolments1()
                                 {
                                     $values = [
                                         'membership_id' => $arrayToPush['Membership_ID'],
-                                        'program_name' => "FIRST BANK LOYALTY PROGRAM",
+                                        'program_name' => "FIRST BANK LOYALTY PROGRAMME",
                                         'currency_name' => "FirstCoin",
                                         'password' => $arrayToPush['auto_gen_password'],
                                         'pin' => $arrayToPush['auto_gen_pin'],
@@ -225,7 +225,8 @@ public static function migrateEnrolments1()
 
                                     $sendmail = parent::sendMailGuzzle($data);
 
-                                    print_r($sendmail);
+                                    // print_r($sendmail);
+                                    Log::debug("Response from email service for " . $arrayToPush['Membership_ID'] . " " . json_encode($sendmail));
 
                                     $data['message'] = 'data migrated ' . $success_count;
                                 }
