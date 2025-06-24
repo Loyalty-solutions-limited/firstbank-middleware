@@ -47,6 +47,7 @@ class EnrolmentMigrationService extends MigrationService{
 
 public static function migrateEnrolments1()
 {
+    // dd(mt_rand());
         //$this->key = '!QAZXSW@#EDCVFR$';
         //self::$username = 'diamondcustomer';
         self::$username = 'firstbank@1234';
@@ -215,7 +216,8 @@ public static function migrateEnrolments1()
                                     $data = [
                                         'body' => parent::buildEnrolmentTemplate($placeholders, $values),
                                         'acid' => $pendingEnrolment->accountnumber,
-                                        'requestId' => Str::random(14),
+                                        'requestId' => mt_rand(),
+                                        // 'requestId' => Str::random(14),
                                         'isBodyHtml' => true,
                                         'title' => "FLEX BIG WITH FIRST BANK LOYALTY PROGRAM",
                                         'fromAddress' => env('MAIL_FROM'),
