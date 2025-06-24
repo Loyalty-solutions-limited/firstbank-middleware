@@ -224,6 +224,8 @@ public static function migrateEnrolments1()
                                         'pdfAttachmentBody' => null
                                     ];
 
+                                    print_r($data);
+
                                     $sendmail = parent::sendMailGuzzle($data);
 
                                     // print_r($sendmail);
