@@ -70,7 +70,7 @@ public static function migrateEnrolments1()
         $pendingEnrolments = DB::table('LOYAL_ENROLLMENT')
                                 ->where('enrollment_status', 0)
                                 ->where('tries', '<=', 10)
-                                ->limit(50)
+                                ->limit(150)
                                 ->get();
         // Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
         // $pendingEnrolments = Enrollment::limit(50)->get();
