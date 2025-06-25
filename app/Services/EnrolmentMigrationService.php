@@ -48,6 +48,7 @@ class EnrolmentMigrationService extends MigrationService{
 public static function migrateEnrolments1()
 {
     // dd(mt_rand());
+        // dd("P@" . Str::random(4) . mt_rand());
         //$this->key = '!QAZXSW@#EDCVFR$';
         //self::$username = 'diamondcustomer';
         self::$username = 'firstbank@1234';
@@ -114,7 +115,7 @@ public static function migrateEnrolments1()
                     $pendingEnrolment->email ? $pendingEnrolment->email = $pendingEnrolment->email : $pendingEnrolment->email = $pendingEnrolment->cif_id . '@noemail.com';
 
                     $pendingEnrolment->branch_code ? $pendingEnrolment->branch_code = $pendingEnrolment->branch_code : $pendingEnrolment->branch_code = '000';
-                    $default_password = 1234;
+                    $default_password = "P@" . Str::random(4) . mt_rand();
 
                     $arrayToPush = array(
 
