@@ -81,7 +81,7 @@ public static function migrateEnrolments1()
                                 ->get();
 
         $allEnrolments = DB::table('LOYAL_ENROLLMENT')
-                                ->all();
+                                ->get();
         // Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
         // $pendingEnrolments = Enrollment::limit(50)->get();
 
