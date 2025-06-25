@@ -70,15 +70,28 @@ public static function migrateEnrolments1()
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 11)->limit(100)->get();//->where('tries', '<', 5);//->get();
         $pendingEnrolments = DB::table('LOYAL_ENROLLMENT')
                                 ->where('enrollment_status', '=', 0)
-                                ->where('tries', '<=', 10)
-                                ->limit(150)
+                                // ->where('tries', '<=', 10)
+                                // ->limit(150)
                                 ->get();
+
+        $alreadyEnrolled = DB::table('LOYAL_ENROLLMENT')
+                                ->where('enrollment_status', '=', 1)
+                                // ->where('tries', '<=', 10)
+                                // ->limit(150)
+                                ->get();
+
+        $allEnrolments = DB::table('LOYAL_ENROLLMENT')
+                                ->all();
         // Enrollment::where('cif_id', '483006203')->update(['enrollment_status' => 1]);
         // $pendingEnrolments = Enrollment::limit(50)->get();
 
         // return response()->json(['data' => $pendingEnrolments]);
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
-        return $pendingEnrolments->count();
+        return [
+            "pending" => $pendingEnrolments->count(),
+            "enrolled" => $alreadyEnrolled->count(),
+            "all" => $allEnrolments->count()
+        ];
        if ($pendingEnrolments->count()>0)
        {
             foreach($pendingEnrolments->unique('cif_id') as $pendingEnrolment)
