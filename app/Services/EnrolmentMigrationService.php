@@ -48,7 +48,7 @@ class EnrolmentMigrationService extends MigrationService{
 public static function migrateEnrolments1()
 {
     // dd(mt_rand());
-        // dd("P@" . Str::random(4) . mt_rand());
+        // dd(Hash::make("Passw0rd11!"));
         //$this->key = '!QAZXSW@#EDCVFR$';
         //self::$username = 'diamondcustomer';
         self::$username = 'firstbank@1234';
@@ -78,7 +78,7 @@ public static function migrateEnrolments1()
 
         // return response()->json(['data' => $pendingEnrolments]);
         // $pendingEnrolments = Enrollment::where('enrollment_status',0)->where('tries', '<=', 4)->select('first_name' ,'last_name', 'email','enrollment_status', 'tries', 'cif_id', 'branch_code', 'accountnumber', 'cif_id', 'pin', 'password')->limit(1000);//->get();//->where('tries', '<', 5);//->get();
-        // return $pendingEnrolments;
+        return $pendingEnrolments->count();
        if ($pendingEnrolments->count()>0)
        {
             foreach($pendingEnrolments->unique('cif_id') as $pendingEnrolment)
