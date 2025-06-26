@@ -213,7 +213,7 @@ public static function migrateEnrolments1()
                                 {
                                     $values = [
                                         'membership_id' => $arrayToPush['Membership_ID'],
-                                        'program_name' => "FIRST BANK LOYALTY PROGRAMME",
+                                        'program_name' => "FirstRewards",
                                         'currency_name' => "FirstCoin",
                                         'password' => $default_password,
                                         'pin' => $arrayToPush['auto_gen_pin'],

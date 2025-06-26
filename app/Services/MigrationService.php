@@ -443,53 +443,53 @@ public static function buildEnrolmentTemplate(array $placeholders, array $values
                     <div id="template-name-area">
                         <p>Dear {FirstName} {LastName} ($membershipID)</p>
                     <p>We are excited to announce the launch of our new Customer Loyalty Program $LoyaltyProgramName brought to you by FirstBank. We have lots of exciting and exclusive rewards to say ‘Thank You’ for your continuous patronage. </p>
-            <p>The $LoyaltyProgramName allows you to earn loyalty points called $CurrencyName, enjoy discounts from various merchants across the country, and many more benefits.</p>
-        <p>Please note that your item(s) would be shipped to the indicated address within 15 working days for delivery.</p>
-        <p>This is our way of saying thank you for your loyalty. Every time you use your card, e-channel, or any of our platforms, you will earn points that can be redeemed as shopping vouchers, movie tickets, and much more. </p>
-        <p>You can access your loyalty account when you log in to your FirstMobile App or FirstOnline.. You can also use the dedicated portal $here to access your loyalty account, to log in, kindly use the details below.</p>
-        <p>Username - $MembershipID </p>
-        <p>Password - $Password (Kindly change this as soon as you login) </p>
-        <p>Pin - $Pin (Only used when transferring points to your loyalty beneficiaries) </p>
-        <p>Journey with us, it’s going to be an amazing ride.</p>
-        <p>Have a question? We are here to help. Contact us today on 0708 062 5000, or send an email to <a href="mailto:firstcontact@firstbanknigeria.com" style="text-decoration:none;">firstcontact@firstbanknigeria.com</a>. You can also access the FAQs on the Loyalty Portal site. </p>
-        <p>Thank you for trusting us enough to put You First</p>
+       <p>The $LoyaltyProgramName Loyalty Program allows you to earn $CurrencyName to enjoy discounts from various merchants across the country. This is our way of saying thank you for your loyalty.</p>
+        <p>Every time you use your card, e-channel, or any of our platforms, you will earn points that can be redeemed as shopping vouchers, movie tickets, and much more. </p>
+        <p>You can access your loyalty account when you log in to your FirstMobile App or FirstOnline.. You can also use the dedicated portal $here to access your loyalty account.</p>
+        <p>Please see the login details below.</p>
+            <p>Username - $MembershipID </p>
+            <p>Password - $Password (Kindly change this as soon as you login) </p>
+            <p>Pin - $Pin (Only used when transferring points to your loyalty beneficiaries) </p>
+            <p>Journey with us, it’s going to be an amazing ride.</p>
+            <p>Have a question? We are here to help. Contact us today on 0708 062 5000, or send an email to <a href="mailto:firstcontact@firstbanknigeria.com" style="text-decoration:none;">firstcontact@firstbanknigeria.com</a>. You can also access the FAQs on the Loyalty Portal site. </p>
+            <p>Thank you for trusting us enough to put You First</p>
 
-            </div>
+                </div>
 
-                </section>
+                    </section>
 
-                <footer id="redeem-template-footer">
-                    <div id="disclaimer-body">
-                        <img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/footer_key.png" id="footer_img" style="margin-right: 20px;">
-                        <p>Please note that FirstBank would never request for your account details or credentials such as membership number, BVN, PIN or password via email, telephone, or otherwise.
-                            Should you receive any request for such information, please disregard it and report to the bank.
+                    <footer id="redeem-template-footer">
+                        <div id="disclaimer-body">
+                            <img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/footer_key.png" id="footer_img" style="margin-right: 20px;">
+                            <p>Please note that FirstBank would never request for your account details or credentials such as membership number, BVN, PIN or password via email, telephone, or otherwise.
+                                Should you receive any request for such information, please disregard it and report to the bank.
+                            </p>
+                        </div><br><br>
+                    </footer>
+                    <div style="background-color: #002955;">
+                        <img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/footer_banner.png" id="footer_banner">
+                        <br>
+                    </div>
+
+                    <div id="template-footer-bottom">
+                        <p>Please follow us on our social media handles</p><br><br>
+                        <div id="footer-socials-area">
+                            <a href="https://www.facebook.com/firstbankofnigeria"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/fb.png" alt="facebook-logo" srcset=""></a>
+                            <a href="https://instagram.com/firstbanknigeria/"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/instagram.png" alt="instagram-logo" srcset=""></a>
+                            <a href="https://www.linkedin.com/company/first-bank-of-nigeria-ltd/"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/linkedln.png" alt="linkedin-logo" srcset=""></a>
+                            <a href="https://twitter.com/firstbankngr"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/twitter.png" alt="twitter-logo" srcset=""></a>
+
+                        </div><br>
+                        <p style="display:flex; margin-right: 100px; margin-left: 100px;">
+                            For enquiries on FirstBank products and services, please call on:
+                            firstcontact@firstbanknigeria.com +234 708 062 5000
+                            Samuel Asabia House 35 Marina P.O. Box 5216, Lagos, Nigeria.
                         </p>
-                    </div><br><br>
-                </footer>
-                <div style="background-color: #002955;">
-                    <img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/footer_banner.png" id="footer_banner">
-                    <br>
+                        <br><br>
+                    </div>
                 </div>
-
-                <div id="template-footer-bottom">
-                    <p>Please follow us on our social media handles</p><br><br>
-                    <div id="footer-socials-area">
-                        <a href="https://www.facebook.com/firstbankofnigeria"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/fb.png" alt="facebook-logo" srcset=""></a>
-                        <a href="https://instagram.com/firstbanknigeria/"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/instagram.png" alt="instagram-logo" srcset=""></a>
-                        <a href="https://www.linkedin.com/company/first-bank-of-nigeria-ltd/"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/linkedln.png" alt="linkedin-logo" srcset=""></a>
-                        <a href="https://twitter.com/firstbankngr"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/twitter.png" alt="twitter-logo" srcset=""></a>
-
-                    </div><br>
-                    <p style="display:flex; margin-right: 100px; margin-left: 100px;">
-                        For enquiries on FirstBank products and services, please call on:
-                        firstcontact@firstbanknigeria.com +234 708 062 5000
-                        Samuel Asabia House 35 Marina P.O. Box 5216, Lagos, Nigeria.
-                    </p>
-                    <br><br>
-                </div>
-            </div>
-        </body>
-        </html>';
+            </body>
+            </html>';
 
     return self::replaceVariables($placeholders, $values, $str);
 }
