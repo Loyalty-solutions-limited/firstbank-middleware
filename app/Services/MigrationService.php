@@ -434,9 +434,9 @@ public static function buildEnrolmentTemplate(array $placeholders, array $values
         <body>
             <div class="overall-template-container">
 
-                        <img id="template-header-img" src="https://loyaltysolutionsnigeria.com/fbn_templates/images/fb_logo.png" alt=""/><br>
+                        <img id="template-header-img" src="https://fbn.perxclm5.com/images/fb_logo.png" alt="" /><br>
 
-                        <img id="template-banner-img" src="https://loyaltysolutionsnigeria.com/fbn_templates/images/enrollment.png" alt>
+                        <img id="template-banner-img" src="https://fbn.perxclm5.com/images/enrollment.png" alt="banner" />
 
                 <section id="message-content">
 
@@ -451,7 +451,7 @@ public static function buildEnrolmentTemplate(array $placeholders, array $values
             <p>Password - $Password (Kindly change this as soon as you login) </p>
             <p>Pin - $Pin (Only used when transferring points to your loyalty beneficiaries) </p>
             <p>Journey with us, it’s going to be an amazing ride.</p>
-            <p>Have a question? We are here to help. Contact us today on 0708 062 5000, or send an email to <a href="mailto:firstcontact@firstbanknigeria.com" style="text-decoration:none;">firstcontact@firstbanknigeria.com</a>. You can also access the FAQs on the Loyalty Portal site. </p>
+            <p>Have a question? We are here to help. Contact us today on 0708 062 5000, or send an email to <a href="mailto:firstcontactcomplaints@firstbanknigeria.com" style="text-decoration:none;">firstcontact@firstbanknigeria.com</a>. You can also access the FAQs on the Loyalty Portal site. </p>
             <p>Thank you for trusting us enough to put You First</p>
 
                 </div>
@@ -460,24 +460,24 @@ public static function buildEnrolmentTemplate(array $placeholders, array $values
 
                     <footer id="redeem-template-footer">
                         <div id="disclaimer-body">
-                            <img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/footer_key.png" id="footer_img" style="margin-right: 20px;">
+                            <img src="https://fbn.perxclm5.com/images/footer_key.png" id="footer_img" style="margin-right: 20px;">
                             <p>Please note that FirstBank would never request for your account details or credentials such as membership number, BVN, PIN or password via email, telephone, or otherwise.
                                 Should you receive any request for such information, please disregard it and report to the bank.
                             </p>
                         </div><br><br>
                     </footer>
                     <div style="background-color: #002955;">
-                        <img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/footer_banner.png" id="footer_banner">
+                        <img src="https://fbn.perxclm5.com/images/footer_banner.png" id="footer_banner">
                         <br>
                     </div>
 
                     <div id="template-footer-bottom">
                         <p>Please follow us on our social media handles</p><br><br>
                         <div id="footer-socials-area">
-                            <a href="https://www.facebook.com/firstbankofnigeria"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/fb.png" alt="facebook-logo" srcset=""></a>
-                            <a href="https://instagram.com/firstbanknigeria/"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/instagram.png" alt="instagram-logo" srcset=""></a>
-                            <a href="https://www.linkedin.com/company/first-bank-of-nigeria-ltd/"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/linkedln.png" alt="linkedin-logo" srcset=""></a>
-                            <a href="https://twitter.com/firstbankngr"><img src="https://loyaltysolutionsnigeria.com/fbn_templates/images/twitter.png" alt="twitter-logo" srcset=""></a>
+                            <a href="https://www.facebook.com/firstbankofnigeria"><img src="https://fbn.perxclm5.com/images/fb.png" alt="facebook-logo" srcset=""></a>
+                            <a href="https://instagram.com/firstbanknigeria/"><img src="https://fbn.perxclm5.com/images/instagram.png" alt="instagram-logo" srcset=""></a>
+                            <a href="https://www.linkedin.com/company/first-bank-of-nigeria-ltd/"><img src="https://fbn.perxclm5.com/images/linkedln.png" alt="linkedin-logo" srcset=""></a>
+                            <a href="https://twitter.com/firstbankngr"><img src="https://fbn.perxclm5.com/images/twitter.png" alt="twitter-logo" srcset=""></a>
 
                         </div><br>
                         <p style="display:flex; margin-right: 100px; margin-left: 100px;">
