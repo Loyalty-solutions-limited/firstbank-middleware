@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 
 class SendMailController extends Controller
 {
-    public function sendMailNew()
+    public function sendMailNew(Request $request)
     {
-        return "Hello World";
+        return $request->all();
     }
 }
