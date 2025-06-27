@@ -13,7 +13,7 @@ class SendMailController extends Controller
     public function sendMailNew(Request $request)
     {
         $req = $request->all();
-        return $request->body . " " . $request->acid . $request['body'] . $request['acid'];
+        return $request->body . " " . $request->acid . $request['body'] . $request['acid'] . $request['requestId'] . $request->requestId;
         $data = [
             'body' => "Hello world!",
             'acid' => "MO53791387",
