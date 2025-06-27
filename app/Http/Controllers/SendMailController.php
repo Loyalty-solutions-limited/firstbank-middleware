@@ -28,7 +28,7 @@ class SendMailController extends Controller
 
         // print_r(json_encode($request->all()));
 
-        $request = new GuzzleRequest('POST', $url, $headers, json_encode($request->all()));
+        $request = new GuzzleRequest('POST', $url, $headers, json_encode($request));
         $res = $client->sendAsync($request)->wait();
         echo $res->getBody();
     }
