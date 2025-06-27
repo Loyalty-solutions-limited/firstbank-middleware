@@ -13,18 +13,21 @@ class SendMailController extends Controller
     public function sendMailNew(Request $request)
     {
         $req = $request->all();
-        return $request->body . " " . $request->acid . $request['body'] . $request['acid'] . $request['requestId'] . $request->requestId;
+        // dd($req['acid']);
+        // return $request->body . " " . $request->acid . $request['body'] . $request['acid'] . $request['requestId'] . $request->requestId;
         $data = [
-            'body' => "Hello world!",
-            'acid' => "MO53791387",
+            'body' => $req['body'],
+            'acid' => $req['acid'],
             'requestId' => (string) mt_rand(),
             'isBodyHtml' => true,
-            'title' => "enrollment test",
+            'title' => $req['title'],
             'fromAddress' => env('MAIL_FROM'),
             'sendPdfAttachment' => false,
             'pdfAttachmentBody' => null,
-            'subject' => "Enrollment test from postman"
+            'subject' => $req['subject']
         ];
+
+        print_r($data);
 
         $sendmail = $this->sendMailGuzzle($data);
 
