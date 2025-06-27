@@ -13,7 +13,10 @@ class SendMailController extends Controller
     public function sendMailNew(Request $request)
     {
         $req = $request->all();
-        // dd($req['acid']);
+        echo gettype($req);
+        // echo "If object " . $req->acid;
+        // echo "If array " . $req->acid;
+        print_r($req);
         // return $request->body . " " . $request->acid . $request['body'] . $request['acid'] . $request['requestId'] . $request->requestId;
         $data = [
             'body' => $req['body'],
