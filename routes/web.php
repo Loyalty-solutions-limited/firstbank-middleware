@@ -15,6 +15,7 @@ use App\Http\Controllers\BAPController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StatsController;
 use App\Http\Middleware\EnsureTokenIsValid;
+use App\Http\Controllers\SendMailController;
 use App\Http\Controllers\LogEmailsController;
 use App\Http\Controllers\MigrationController;
 use App\Http\Controllers\EnrollmentController;
@@ -83,6 +84,7 @@ Route::get('/get-mail-parameters', [LogEmailsController::class, 'getMailParamete
 Route::get('/test-route', [EnrollmentController::class, 'test_db']);
 Route::get('/trans-test', [EnrollmentController::class, 'test_trans']);
 Route::get('/test_email_service', [LogEmailsController::class, 'test_email']);
+Route::post('send_mail_new', [SendMailController::class, 'sendMailNew']);
 // Route::get('/');
 Route::get('stran2', function(){
 	// return TransactionMigrationService::migrateTransaction2();
