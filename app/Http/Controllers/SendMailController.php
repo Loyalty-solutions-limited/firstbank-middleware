@@ -12,16 +12,17 @@ class SendMailController extends Controller
 {
     public function sendMailNew(Request $request)
     {
-        return $request->body;
+        // return $request->body;
         $data = [
-            'body' => $request->body,
-            'acid' => $request->acid,
+            'body' => "Hello world!",
+            'acid' => "MO53791387",
             'requestId' => (string) mt_rand(),
             'isBodyHtml' => true,
-            'title' => $request->title,
+            'title' => "enrollment test",
             'fromAddress' => env('MAIL_FROM'),
             'sendPdfAttachment' => false,
-            'pdfAttachmentBody' => null
+            'pdfAttachmentBody' => null,
+            'subject' => "Enrollment test from postman"
         ];
 
         $sendmail = $this->sendMailGuzzle($data);
