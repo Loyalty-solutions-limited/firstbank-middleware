@@ -12,6 +12,7 @@ class SendMailController extends Controller
 {
     public function sendMailNew(Request $request)
     {
+        dd($request);
         $data = [
             'body' => $request->body,
             'acid' => $request->acid,
