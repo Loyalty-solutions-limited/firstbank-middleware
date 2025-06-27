@@ -97,6 +97,7 @@ class LogEmailsController extends Controller
     public function sendMailGuzzle(LogEmailsRequest $request)
     {
         $url = env('POINTS_TO_CASH_URL') . "email/send-email";
+        dd($url);
 
 
         // $res = Http::withOptions(['verify' => false])->post($url);
