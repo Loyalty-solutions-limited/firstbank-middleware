@@ -128,7 +128,10 @@ public static function migrateEnrolments1()
                     $pendingEnrolment->email ? $pendingEnrolment->email = $pendingEnrolment->email : $pendingEnrolment->email = $pendingEnrolment->cif_id . '@noemail.com';
 
                     $pendingEnrolment->branch_code ? $pendingEnrolment->branch_code = $pendingEnrolment->branch_code : $pendingEnrolment->branch_code = '000';
+                    // $default_password = "P@" . "123456";
                     $default_password = "P@" . Str::random(4) . mt_rand();
+                    $default_pin = rand(1000,9999);
+                    // echo $default_pin;
 
                     $arrayToPush = array(
 
@@ -137,16 +140,18 @@ public static function migrateEnrolments1()
                         'Company_password'=>self::$password,//$company_details->password?$company_details->password:0,
 
                         'Membership_ID'=>$pendingEnrolment->cif_id,
+                        // 'Acid' => $pendingEnrolment->acid,
                         'Acid' => $pendingEnrolment->accountnumber,
                         // 'Membership_ID'=>parent::string_encrypt($pendingEnrolment->cif_id, self::$key,self::$iv),
 
                         'Branch_code'=>$pendingEnrolment->branch_code,
 
                         //'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:'1234',
-                        'auto_gen_password'=>$pendingEnrolment->password?$pendingEnrolment->password:Hash::make($default_password),
+                        'auto_gen_password'=>Hash::make($default_password),
                         // 'auto_gen_password'=>$pendingEnrolment->password?Hash::make($pendingEnrolment->password):Hash::make(1234),
 
-                        'auto_gen_pin'=>$pendingEnrolment->pin?$pendingEnrolment->pin:'0000',
+                        'auto_gen_pin'=> Hash::make($default_pin),
+                        // 'auto_gen_pin'=>$pendingEnrolment->pin?$pendingEnrolment->pin:'0000',
                         'member_reference'=>$pendingEnrolment->cif_id?$pendingEnrolment->cif_id:'',
 
                         'API_flag'=>'enrol',
@@ -216,7 +221,7 @@ public static function migrateEnrolments1()
                                         'program_name' => "FirstRewards",
                                         'currency_name' => "FirstCoin",
                                         'password' => $default_password,
-                                        'pin' => $arrayToPush['auto_gen_pin'],
+                                        'pin' => $default_pin,
                                         'link' => 'https://firstrewards.firstbanknigeria.com/',
                                     ];
 
@@ -231,6 +236,7 @@ public static function migrateEnrolments1()
 
                                     $data = [
                                         'body' => parent::buildEnrolmentTemplate($placeholders, $values),
+                                        // 'acid' => $pendingEnrolment->acid,
                                         'acid' => $pendingEnrolment->accountnumber,
                                         'requestId' => (string) mt_rand(),
                                         'isBodyHtml' => true,
