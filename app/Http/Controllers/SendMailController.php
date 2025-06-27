@@ -15,12 +15,12 @@ class SendMailController extends Controller
         $data = [
             'body' => $request->body,
             'acid' => $request->acid,
-            'requestId' => $request->requestId,
-            'isBodyHtml' => $request->isBodyHtml,
+            'requestId' => (string) mt_rand(),
+            'isBodyHtml' => true,
             'title' => $request->title,
             'fromAddress' => env('MAIL_FROM'),
-            'sendPdfAttachment' => $request->sendPdfAttachment,
-            'pdfAttachmentBody' => $request->pdfAttachmentBody
+            'sendPdfAttachment' => false,
+            'pdfAttachmentBody' => null
         ];
 
         $sendmail = $this->sendMailGuzzle($data);
