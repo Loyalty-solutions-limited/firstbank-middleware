@@ -77,6 +77,7 @@ Route::post('/sendbill_payment_advice', [BAPController::class, 'sendBillPaymentA
 Route::post('/log-emails', [LogEmailsController::class, 'log']);
 Route::post('/send-email-API', [LogEmailsController::class, 'sendMail']);
 Route::post('/send-email-guzzle', [LogEmailsController::class, 'sendMailGuzzle']);
+Route::post('/send_mail', [LogEmailsController::class, 'sendMailGuzzle']);
 // Route::post('/send-email-SMTP', [LogEmailsController::class, 'sendWithSMTP']);
 Route::get('/get-mail-parameters', [LogEmailsController::class, 'getMailParameters']);
 Route::get('/test-route', [EnrollmentController::class, 'test_db']);
