@@ -13,10 +13,10 @@ class SendMailController extends Controller
     public function sendMailNew(Request $request)
     {
         $req = $request->all();
-        echo gettype($req);
+        // echo gettype($req);
         // echo "If object " . $req->acid;
         // echo "If array " . $req->acid;
-        print_r($req);
+        // print_r($req);
         // return $request->body . " " . $request->acid . $request['body'] . $request['acid'] . $request['requestId'] . $request->requestId;
         $data = [
             'body' => $req['body'],
@@ -30,7 +30,7 @@ class SendMailController extends Controller
             'subject' => $req['subject']
         ];
 
-        print_r($data);
+        // print_r($data);
 
         $sendmail = $this->sendMailGuzzle($data);
 
