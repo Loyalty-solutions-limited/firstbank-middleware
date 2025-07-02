@@ -17,7 +17,7 @@ class PTCController extends Controller
         $url = $this->url . "aquisition";
         $validInputs = $request->validate([
             'pointValue' => ['required'],
-            'body' => ['required'],
+            'points' => ['required'],
             'amount' => ['required'],
             'transactionDate' => ['required'],
             'transactionId' => ['required'],
