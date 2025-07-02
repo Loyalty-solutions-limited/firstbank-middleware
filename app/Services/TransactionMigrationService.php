@@ -350,7 +350,7 @@ public static function rollbackTransactions($id)
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>parent::passwordReturn(),
-                'Membership_ID'=>$pendingTransaction->cif_id,
+                'Membership_ID'=>$pendingTransaction->member_reference,
                 // 'Membership_ID'=>$membership_id_resolved ?? '8711130',
                 'Transaction_Date'=>$pendingTransaction->transaction_date,
                 'Transaction_Type_code'=>$pendingTransaction->transaction_type,
