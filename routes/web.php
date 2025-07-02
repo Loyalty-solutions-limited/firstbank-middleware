@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Middleware\HttpRedirect;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BAPController;
+use App\Http\Controllers\PTCController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StatsController;
 use App\Http\Middleware\EnsureTokenIsValid;
@@ -85,6 +86,8 @@ Route::get('/test-route', [EnrollmentController::class, 'test_db']);
 Route::get('/trans-test', [EnrollmentController::class, 'test_trans']);
 Route::get('/test_email_service', [LogEmailsController::class, 'test_email']);
 Route::post('send_mail_new', [SendMailController::class, 'sendMailNew']);
+Route::post('/point_acquisition', [PTCController::class, 'acquisition']);
+Route::post('/point_redeem', [PTCController::class, 'redeem']);
 // Route::get('/');
 Route::get('stran2', function(){
 	// return TransactionMigrationService::migrateTransaction2();
