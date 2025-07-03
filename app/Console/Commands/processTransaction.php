@@ -40,7 +40,8 @@ class processTransaction extends Command
     {
         $url = "https://172.16.26.8";
 
-        return Log::info(self::make_curl($url . "/runcron2?API_flag=stage_final7"));
+        return Log::info(self::make_curl($url . "/migrate_transaction"));
+        // return Log::info(self::make_curl($url . "/runcron2?API_flag=stage_final7"));
     }
 
     public static function make_curl($url)
