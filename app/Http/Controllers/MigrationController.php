@@ -43,10 +43,10 @@ class MigrationController extends Controller
             return CreateAccessKeyService::index();
         }else if($request->API_flag == 'stage_final7'){
 
-			return TransactionMigrationService::rollbackTransactions($request->id);
+			return TransactionMigrationService::rollbackTransactions();
 		} else if($request->API_flag == 'staging'){
 
-			return TransactionMigrationService::rollbackTransactions($request->id);
+			return TransactionMigrationService::rollbackTransactions();
 		}
         else{
             return TransactionMigrationService::migrateTransaction1();

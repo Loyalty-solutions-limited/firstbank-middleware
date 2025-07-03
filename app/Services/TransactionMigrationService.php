@@ -330,7 +330,7 @@ public static function migrateTransaction2():void{
   }
 
 
-public static function rollbackTransactions($id)
+public static function rollbackTransactions()
 {
 
       $success_count = 0;  $failure_count = 0;
@@ -341,9 +341,9 @@ public static function rollbackTransactions($id)
     //   $pendingTransactions = Transaction::where('status', '=', 0)->limit(50);
     $pendingTransactions = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->where('status', '=', 0)
-                                ->limit(30)
+                                ->limit(1)
                                 ->get();
-
+    dd($pendingTransactions);
     $alreadyStaged = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->where('status', '=', 1)
                                 ->get();
