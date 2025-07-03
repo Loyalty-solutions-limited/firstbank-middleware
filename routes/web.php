@@ -28,6 +28,7 @@ use App\Http\Controllers\EmailChannelController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReportManagementController;
 use App\Services\TransactionMigrationService as TMS;
+use App\Http\Controllers\MigrateTransactionController;
 
 //use Artisan;
 //AuthController
@@ -88,6 +89,7 @@ Route::get('/test_email_service', [LogEmailsController::class, 'test_email']);
 Route::post('send_mail_new', [SendMailController::class, 'sendMailNew']);
 Route::post('/point_acquisition', [PTCController::class, 'acquisition']);
 Route::post('/point_redeem', [PTCController::class, 'redeem']);
+Route::get('/migrate_transaction', [MigrateTransactionController::class, 'migrate_transaction']);
 // Route::get('/');
 Route::get('stran2', function(){
 	// return TransactionMigrationService::migrateTransaction2();

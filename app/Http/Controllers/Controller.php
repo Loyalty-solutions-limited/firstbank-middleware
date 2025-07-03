@@ -84,4 +84,30 @@ class Controller extends BaseController
 
 }
 
+    public static function pushToPERX($url="https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/api/v1/index.php", $postFields, $payload)
+    {
+
+        $curl= curl_init();
+        $ch = $curl;
+        $timeout = 0; // Set 0 for no timeout.
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postFields));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type= application/json"));
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        $result = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            $error_msg = curl_error($ch). "^^";
+        }else{
+            $error_msg = '';
+        }
+
+        curl_close($ch);
+
+        return $result;
+    }
+
 }
