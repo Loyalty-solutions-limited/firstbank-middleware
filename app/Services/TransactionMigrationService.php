@@ -350,7 +350,7 @@ public static function rollbackTransactions($id)
     $allTransactions = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->get();
 
-    return print_r(
+    print_r(
             ["pending" => $pendingTransactions->count(),
             "staged" => $alreadyStaged->count(),
             "all" => $allTransactions->count()]
@@ -368,8 +368,8 @@ public static function rollbackTransactions($id)
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>parent::passwordReturn(),
-                'Membership_ID'=>$pendingTransaction->member_reference,
-                'Acid' => $pendingTransaction->account_number,
+                'Membership_ID'=>$pendingTransaction->cif_id,
+                // 'Acid' => $pendingTransaction->account_number,
                 // 'Membership_ID'=>$membership_id_resolved ?? '8711130',
                 'Transaction_Date'=>$pendingTransaction->transaction_date,
                 'Transaction_Type_code'=>$pendingTransaction->transaction_type,
@@ -383,7 +383,10 @@ public static function rollbackTransactions($id)
                 'id'=>$pendingTransaction->id
                 );
                 // dd($arrayToPush);
-                $pendingTransaction->update(['status' => 1]);
+                // $pendingTransaction->update(['status' => 1]);
+                DB::table('transactions')
+                        ->where('id', '=', $pendingTransaction->id)
+                        ->update(['status' => 1]);
 				array_push($payload, $arrayToPush);
 		  }
 
