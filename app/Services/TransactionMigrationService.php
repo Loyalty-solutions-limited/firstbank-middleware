@@ -1,12 +1,13 @@
 <?php
 namespace App\Services;
 //ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
-use App\Models\Transaction;
 use App\Models\Enrollment;
-use App\Models\TransactionReportLog ;
-use App\Services\EmailDispatcher;
-use App\Services\UserService;
+use App\Models\Transaction;
 use App\Services\CurlService;
+use App\Services\UserService;
+use App\Services\EmailDispatcher;
+use Illuminate\Support\Facades\DB;
+use App\Models\TransactionReportLog ;
 
 class TransactionMigrationService extends MigrationService{
     public static $key = '!QAZXSW@#EDCVFR$';
@@ -336,13 +337,30 @@ public static function rollbackTransactions($id)
 	  //echo Transaction->all
 	  $payload = array(); //rollback emails till 7th of feb 2023
     //   $pendingTransactions = Transaction::limit(50)->get();
-      $pendingTransactions = Transaction::where('status', '=', 0)->limit(50);
+    //   $pendingTransactions = Transaction::where('status', '=', 0)->limit(50);
+    $pendingTransactions = DB::table('QUALIFIED_TRANSACTIONS')
+                                ->where('status', '=', 0)
+                                ->limit(30)
+                                ->get();
+
+    $alreadyStaged = DB::table('QUALIFIED_TRANSACTIONS')
+                                ->where('status', '=', 1)
+                                ->get();
+
+    $allTransactions = DB::table('QUALIFIED_TRANSACTIONS')
+                                ->get();
+
+    print_r(
+            ["pending" => $pendingTransactions->count(),
+            "staged" => $alreadyStaged->count(),
+            "all" => $allTransactions->count()]
+        );
     //   return $pendingTransactions->count();
     //   dd($pendingTransactions->count());
 	  //echo $pendingTransactions->count(); exit;
     //   return response()->json(['data' => $pendingTransactions]);
       if($pendingTransactions->count() > 0){
-          foreach($pendingTransactions->get() as $pendingTransaction){
+          foreach($pendingTransactions->unique('transaction_reference') as $pendingTransaction){
             //$pendingTransaction->quantity  = 1;
             //dd($pendingTransaction);
             // $membership_id_resolved = parent::resolveMemberReference($pendingTransaction->cif_id) ?? '8731110';
