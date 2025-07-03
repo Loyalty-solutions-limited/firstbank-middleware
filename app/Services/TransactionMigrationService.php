@@ -341,9 +341,9 @@ public static function rollbackTransactions()
     //   $pendingTransactions = Transaction::where('status', '=', 0)->limit(50);
     $pendingTransactions = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->where('status', '=', 0)
-                                ->limit(1)
+                                ->limit(30)
                                 ->get();
-    dd($pendingTransactions);
+    // dd($pendingTransactions);
     $alreadyStaged = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->where('status', '=', 1)
                                 ->get();
