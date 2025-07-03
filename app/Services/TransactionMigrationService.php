@@ -7,6 +7,7 @@ use App\Services\CurlService;
 use App\Services\UserService;
 use App\Services\EmailDispatcher;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use App\Models\TransactionReportLog ;
 
 class TransactionMigrationService extends MigrationService{
