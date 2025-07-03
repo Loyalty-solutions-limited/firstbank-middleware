@@ -351,11 +351,11 @@ public static function rollbackTransactions()
     $allTransactions = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->get();
 
-    print_r(
-            ["pending" => $pendingTransactions->count(),
-            "staged" => $alreadyStaged->count(),
-            "all" => $allTransactions->count()]
-        );
+    // print_r(
+    //         ["pending" => $pendingTransactions->count(),
+    //         "staged" => $alreadyStaged->count(),
+    //         "all" => $allTransactions->count()]
+    //     );
     //   return $pendingTransactions->count();
     //   dd($pendingTransactions->count());
 	  //echo $pendingTransactions->count(); exit;

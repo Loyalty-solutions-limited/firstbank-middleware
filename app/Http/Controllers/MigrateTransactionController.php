@@ -24,7 +24,7 @@ class MigrateTransactionController extends Controller
                                 ->where('status', '=', 0)
                                 ->limit(30)
                                 ->get();
-    // dd($pendingTransactions);
+    // dd($pendingTransactions->count());
     $alreadyStaged = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->where('status', '=', 1)
                                 ->get();
