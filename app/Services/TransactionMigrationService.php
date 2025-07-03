@@ -384,7 +384,7 @@ public static function rollbackTransactions($id)
                 );
                 // dd($arrayToPush);
                 // $pendingTransaction->update(['status' => 1]);
-                DB::table('transactions')
+                DB::table('QUALIFIED_TRANSACTIONS')
                         ->where('id', '=', $pendingTransaction->id)
                         ->update(['status' => 1]);
 				array_push($payload, $arrayToPush);
