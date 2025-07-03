@@ -350,7 +350,7 @@ public static function rollbackTransactions($id)
     $allTransactions = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->get();
 
-    print_r(
+    return print_r(
             ["pending" => $pendingTransactions->count(),
             "staged" => $alreadyStaged->count(),
             "all" => $allTransactions->count()]
