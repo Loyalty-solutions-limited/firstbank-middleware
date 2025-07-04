@@ -39,6 +39,7 @@ class processTransaction extends Command
     public function handle()
     {
         $url = "https://172.16.26.8";
+        // $url = "http://127.0.0.1:8000";
 
         return Log::info(self::make_curl($url . "/migrate_transaction"));
         // return Log::info(self::make_curl($url . "/runcron2?API_flag=stage_final7"));

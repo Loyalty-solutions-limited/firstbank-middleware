@@ -22,21 +22,21 @@ class MigrateTransactionController extends Controller
     //   $pendingTransactions = Transaction::where('status', '=', 0)->limit(50);
     $pendingTransactions = DB::table('QUALIFIED_TRANSACTIONS')
                                 ->where('status', '=', 0)
-                                ->limit(30)
+                                ->limit(100)
                                 ->get();
     // dd($pendingTransactions->count());
-    $alreadyStaged = DB::table('QUALIFIED_TRANSACTIONS')
-                                ->where('status', '=', 1)
-                                ->get();
+    // $alreadyStaged = DB::table('transactions')
+    //                             ->where('status', '=', 1)
+    //                             ->get();
 
-    $allTransactions = DB::table('QUALIFIED_TRANSACTIONS')
-                                ->get();
+    // $allTransactions = DB::table('transactions')
+    //                             ->get();
 
-    print_r(
-            ["pending" => $pendingTransactions->count(),
-            "staged" => $alreadyStaged->count(),
-            "all" => $allTransactions->count()]
-        );
+    // print_r(
+    //         ["pending" => $pendingTransactions->count(),
+    //         "staged" => $alreadyStaged->count(),
+    //         "all" => $allTransactions->count()]
+    //     );
     //   return $pendingTransactions->count();
     //   dd($pendingTransactions->count());
 	  //echo $pendingTransactions->count(); exit;
@@ -50,8 +50,8 @@ class MigrateTransactionController extends Controller
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>self::$password,
-                // 'Membership_ID'=>$pendingTransaction->cif_id,
-                'Membership_ID'=>$pendingTransaction->member_reference,
+                'Membership_ID'=>$pendingTransaction->cif_id,
+                // 'Membership_ID'=>$pendingTransaction->member_reference,
                 'Acid' => $pendingTransaction->account_number,
                 // 'Membership_ID'=>$membership_id_resolved ?? '8711130',
                 'Transaction_Date'=>$pendingTransaction->transaction_date,

@@ -16,7 +16,7 @@ class PTCController extends Controller
 
     public function acquisition(Request $request)
     {
-        $url = $this->url . "aquisition";
+        $url = $this->url . "PointToCash/Acquisition";
         $validInputs = $request->validate([
             'pointValue' => ['required'],
             'points' => ['required'],
@@ -33,7 +33,7 @@ class PTCController extends Controller
 
     public function redeem(Request $request)
     {
-        $url = $this->url . "redeem";
+        $url = $this->url . "PointToCash/Redeem";
         $validInputs = $request->validate([
             'transactionId' => ['required'],
             'acid' => ['required'],
