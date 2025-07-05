@@ -50,8 +50,8 @@ class MigrateTransactionController extends Controller
               $arrayToPush = array(
                 'Company_username'=>self::$username,
                 'Company_password'=>self::$password,
-                'Membership_ID'=>$pendingTransaction->cif_id,
-                // 'Membership_ID'=>$pendingTransaction->member_reference,
+                // 'Membership_ID'=>$pendingTransaction->cif_id,
+                'Membership_ID'=>$pendingTransaction->member_reference,
                 'Acid' => $pendingTransaction->account_number,
                 // 'Membership_ID'=>$membership_id_resolved ?? '8711130',
                 'Transaction_Date'=>$pendingTransaction->transaction_date,
