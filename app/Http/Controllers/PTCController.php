@@ -39,13 +39,13 @@ class PTCController extends Controller
             'acid' => ['required'],
             'amount' => ['required']
         ]);
-        $data = array(
-            "transactionId: ".$validInputs['transactionId'],
-            "acid: ".$validInputs['acid'],
-            "amount: ".$validInputs['amount']
-        );
+        // $data = array(
+        //     "transactionId: ".$validInputs['transactionId'],
+        //     "acid: ".$validInputs['acid'],
+        //     "amount: ".$validInputs['amount']
+        // );
 
-        return $this->makeGuzzle($url, $data);
+        return $this->makeGuzzle($url, $validInputs);
         return json_decode($this->makeCurl($url, 'POST', $data));
     }
 
