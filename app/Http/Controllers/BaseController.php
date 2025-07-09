@@ -54,7 +54,7 @@ class BaseController extends Controller
 
     protected function postDataGuzzle($data, $url)
     {
-        $endpoint = config("BAP_URL") . $url;
+        $endpoint = config("externalservices.BAP_URL") . $url;
 
 
         // $res = Http::withOptions(['verify' => false])->post($url);
@@ -62,7 +62,7 @@ class BaseController extends Controller
         $client = new Client(['verify' => false]);
         $headers = [
         'Accept' => 'application/xml',
-        'Api-Key' => config("BAP_API_KEY"),
+        'Api-Key' => config("externalservices.BAP_API_KEY"),
         'Content-Type' => 'application/xml',
         'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
         ];
@@ -76,12 +76,13 @@ class BaseController extends Controller
 
     protected function getDataGuzzle($url)
     {
-        $endpoint = config("BAP_URL") . $url;
+        $endpoint = config("externalservices.BAP_URL") . $url;
+
         $client = new Client(['verify' => false]);
         $headers = [
         'Accept' => 'application/xml',
         'Content-Type' => 'application/xml',
-        'Api-Key' => config("BAP_API_KEY"),
+        'Api-Key' => config("externalservices.BAP_API_KEY"),
         'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
         ];
         // $res = $client->request('GET', $url);
