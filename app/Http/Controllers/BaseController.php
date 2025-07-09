@@ -63,7 +63,7 @@ class BaseController extends Controller
         $headers = [
         'Accept' => 'application/xml',
         'Api-Key' => config("externalservices.BAP_API_KEY"),
-        'Content-Type' => 'application/xml',
+        'Content-Type' => 'text/plain',
         'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
         ];
 
@@ -81,7 +81,7 @@ class BaseController extends Controller
         $client = new Client(['verify' => false]);
         $headers = [
         'Accept' => 'application/xml',
-        'Content-Type' => 'application/xml',
+        'Content-Type' => 'text/plain',
         'Api-Key' => config("externalservices.BAP_API_KEY"),
         'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
         ];
