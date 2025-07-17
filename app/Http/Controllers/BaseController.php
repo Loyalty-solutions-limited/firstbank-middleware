@@ -28,7 +28,7 @@ class BaseController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => config("BAP_URL") . $url,
+        CURLOPT_URL => config("externalservices.BAP_URL") . $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -39,7 +39,7 @@ class BaseController extends Controller
         CURLOPT_POSTFIELDS => $data,
         CURLOPT_HTTPHEADER => array(
             'Accept: application/xml',
-            'Api-Key: config("BAP_API_KEY")',
+            'Api-Key: config("externalservices.BAP_API_KEY")',
             'Content-Type: application/xml'
         ),
         ));

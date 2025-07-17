@@ -11,24 +11,24 @@ class BAPController extends BaseController
 {
     public function getBillerCategory()
     {
-        return $this->getDataGuzzle("GetBillerCategories");
-        // return $this->postData("", "GetBillerCategories");
+        // return $this->getDataGuzzle("GetBillerCategories");
+        return $this->postData("", "GetBillerCategories");
     }
 
     public function getBillers(getBillerCategoryRequest $request)
     {
         $payload = "<SearchCriteria><TerminalId>3FAP0001</TerminalId><CategoryId>$request->cat_id</CategoryId></SearchCriteria>";
 
-        return $this->postDataGuzzle($payload, "GetBillers");
-        // return $this->postData($payload, "GetBillers");
+        // return $this->postDataGuzzle($payload, "GetBillers");
+        return $this->postData($payload, "GetBillers");
     }
 
     public function getBillerItems(getBillerItemRequest $request)
     {
         $payload = "<SearchCriteria><BillerId>$request->biller_id</BillerId><TerminalId>3FAP0001</TerminalId></SearchCriteria>";
 
-        return $this->postData($payload, "GetBillerPaymentItems");
         // return $this->postData($payload, "GetBillerPaymentItems");
+        return $this->postData($payload, "GetBillerPaymentItems");
     }
 
     public function sendBillPaymentAdvice(sendBillPaymentAdviceRequest $request)
@@ -48,8 +48,8 @@ class BAPController extends BaseController
             </BillPaymentAdvice>";
             // dd($payload);
 
-            return $this->postDataGuzzle($payload, "SendBillPaymentAdvice");
-            // return $this->postData($payload, "SendBillPaymentAdvice");
+            // return $this->postDataGuzzle($payload, "SendBillPaymentAdvice");
+            return $this->postData($payload, "SendBillPaymentAdvice");
 
     }
 }
