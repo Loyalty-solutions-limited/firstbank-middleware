@@ -11,13 +11,14 @@ class BAPController extends BaseController
 {
     public function getBillerCategory()
     {
-        // return $this->getDataGuzzle("GetBillerCategories");
-        return $this->postData("", "GetBillerCategories");
+        return $this->getDataGuzzle("GetBillerCategories");
+        // return $this->postData("", "GetBillerCategories");
     }
 
     public function getBillers(getBillerCategoryRequest $request)
     {
-        $payload = "<SearchCriteria><TerminalId>3FAP0001</TerminalId><CategoryId>$request->cat_id</CategoryId></SearchCriteria>";
+        $payload = "<SearchCriteria><TerminalId>3FCL0001</TerminalId><CategoryId>$request->cat_id</CategoryId></SearchCriteria>";
+        // $payload = "<SearchCriteria><TerminalId>3FAP0001</TerminalId><CategoryId>$request->cat_id</CategoryId></SearchCriteria>";
 
         // return $this->postDataGuzzle($payload, "GetBillers");
         return $this->postData($payload, "GetBillers");
@@ -25,7 +26,8 @@ class BAPController extends BaseController
 
     public function getBillerItems(getBillerItemRequest $request)
     {
-        $payload = "<SearchCriteria><BillerId>$request->biller_id</BillerId><TerminalId>3FAP0001</TerminalId></SearchCriteria>";
+        $payload = "<SearchCriteria><BillerId>$request->biller_id</BillerId><TerminalId>3FCL0001</TerminalId></SearchCriteria>";
+        // $payload = "<SearchCriteria><BillerId>$request->biller_id</BillerId><TerminalId>3FAP0001</TerminalId></SearchCriteria>";
 
         // return $this->postData($payload, "GetBillerPaymentItems");
         return $this->postData($payload, "GetBillerPaymentItems");
@@ -39,7 +41,7 @@ class BAPController extends BaseController
             <PaymentCode>$request->payment_code</PaymentCode>
             <RequestReference>$trans_ref</RequestReference>
             <SuspenseAccount />
-            <TerminalId>3FAP0001</TerminalId>
+            <TerminalId>3FCL0001</TerminalId>
             <CustomerAccountNumber>$request->customer_account_number</CustomerAccountNumber>
             <CustomerId>$request->customer_id</CustomerId>
             <CustomerMobile>$request->customer_mobile</CustomerMobile>
