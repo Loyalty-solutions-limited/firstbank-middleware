@@ -26,8 +26,8 @@ use App\Http\Controllers\PointToCashController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\EmailChannelController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\ReportManagementController;
 use App\Services\TransactionMigrationService as TMS;
+use App\Http\Controllers\ReportManagementController;
 use App\Http\Controllers\MigrateTransactionController;
 
 //use Artisan;
@@ -73,7 +73,7 @@ Route::get('blank-membership', [NotificationController::class, 'blank_membership
 Route::get('staging-done', [NotificationController::class, 'staging_done']);
 Route::post('/point_to_cash/aquisition', [PointToCashController::class, 'aquisition']);
 Route::post('/point_to_cash/redeem', [PointToCashController::class, 'redeem']);
-Route::get('/getbiller_categories', [BAPController::class, 'getBillerCategory']);
+Route::post('/getbiller_categories', [BAPController::class, 'getBillerCategory']);
 Route::post('/getbillers', [BAPController::class, 'getBillers']);
 Route::post('/get_biller_items', [BAPController::class, 'getBillerItems']);
 Route::post('/sendbill_payment_advice', [BAPController::class, 'sendBillPaymentAdvice']);

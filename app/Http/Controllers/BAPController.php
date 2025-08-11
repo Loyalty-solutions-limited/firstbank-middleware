@@ -3,25 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\getBillerCategoryRequest;
 use App\Http\Requests\getBillerItemRequest;
+use App\Http\Requests\getBillerCategoryRequest;
 use App\Http\Requests\sendBillPaymentAdviceRequest;
 
 class BAPController extends BaseController
 {
     public function getBillerCategory()
     {
-        return $this->getDataGuzzle("GetBillerCategories");
+        $payload = "<SearchCriteria><TerminalId>3FCL0001</TerminalId></SearchCriteria>";
+        return $this->postDataGuzzle($payload, "GetBillerCategories");
         // return $this->postData("", "GetBillerCategories");
     }
+    
 
     public function getBillers(getBillerCategoryRequest $request)
     {
         $payload = "<SearchCriteria><TerminalId>3FCL0001</TerminalId><CategoryId>$request->cat_id</CategoryId></SearchCriteria>";
         // $payload = "<SearchCriteria><TerminalId>3FAP0001</TerminalId><CategoryId>$request->cat_id</CategoryId></SearchCriteria>";
 
-        // return $this->postDataGuzzle($payload, "GetBillers");
-        return $this->postData($payload, "GetBillers");
+        return $this->postDataGuzzle($payload, "GetBillers");
+        // return $this->postData($payload, "GetBillers");
     }
 
     public function getBillerItems(getBillerItemRequest $request)
@@ -29,8 +31,8 @@ class BAPController extends BaseController
         $payload = "<SearchCriteria><BillerId>$request->biller_id</BillerId><TerminalId>3FCL0001</TerminalId></SearchCriteria>";
         // $payload = "<SearchCriteria><BillerId>$request->biller_id</BillerId><TerminalId>3FAP0001</TerminalId></SearchCriteria>";
 
-        // return $this->postData($payload, "GetBillerPaymentItems");
         return $this->postData($payload, "GetBillerPaymentItems");
+        // return $this->postData($payload, "GetBillerPaymentItems");
     }
 
     public function sendBillPaymentAdvice(sendBillPaymentAdviceRequest $request)
@@ -50,8 +52,8 @@ class BAPController extends BaseController
             </BillPaymentAdvice>";
             // dd($payload);
 
-            // return $this->postDataGuzzle($payload, "SendBillPaymentAdvice");
-            return $this->postData($payload, "SendBillPaymentAdvice");
+            return $this->postDataGuzzle($payload, "SendBillPaymentAdvice");
+            // return $this->postData($payload, "SendBillPaymentAdvice");
 
     }
 }

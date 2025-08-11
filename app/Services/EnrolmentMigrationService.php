@@ -40,8 +40,6 @@ class EnrolmentMigrationService extends MigrationService{
 
     {
 
-
-
     }
 
 
