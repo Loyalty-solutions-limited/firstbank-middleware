@@ -19,11 +19,12 @@ class BAPController extends BaseController
 
     public function getBillers(getBillerCategoryRequest $request)
     {
+        //return $request->cat_id;
         $payload = "<SearchCriteria><TerminalId>3FCL0001</TerminalId><CategoryId>$request->cat_id</CategoryId></SearchCriteria>";
         // $payload = "<SearchCriteria><TerminalId>3FAP0001</TerminalId><CategoryId>$request->cat_id</CategoryId></SearchCriteria>";
-
+     return $payload;
         return $this->postDataGuzzle($payload, "GetBillers");
-        // return $this->postData($payload, "GetBillers");
+         //return $this->postData($payload, "GetBillers");
     }
 
     public function getBillerItems(getBillerItemRequest $request)
