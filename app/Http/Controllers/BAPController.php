@@ -31,11 +31,14 @@ class BAPController extends BaseController
 
     public function getBillerItems(getBillerItemRequest $request)
     {
-        $payload = "<SearchCriteria><BillerId>$request->biller_id</BillerId><TerminalId>3FCL0001</TerminalId></SearchCriteria>";
+        $payload = "<SearchCriteria>
+                      <BillerId>$request->biller_id</BillerId>
+                      <TerminalId>3FCL0001</TerminalId>
+                    </SearchCriteria>";
         // $payload = "<SearchCriteria><BillerId>$request->biller_id</BillerId><TerminalId>3FAP0001</TerminalId></SearchCriteria>";
 
-        return $this->postData($payload, "GetBillerPaymentItems");
-        // return $this->postData($payload, "GetBillerPaymentItems");
+        //return $this->postData($payload, "GetBillerPaymentItems");
+         return $this->postDataGuzzle($payload, "GetBillerPaymentItems");
     }
 
     public function sendBillPaymentAdvice(sendBillPaymentAdviceRequest $request)

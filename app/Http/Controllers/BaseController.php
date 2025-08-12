@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use GuzzleHttp\Psr7\Request as GuzzleRequest;
 
 class BaseController extends Controller
@@ -55,7 +55,6 @@ class BaseController extends Controller
     protected function postDataGuzzle($data, $url)
     {
         $endpoint = config("externalservices.BAP_URL") . $url;
-
 
         // $res = Http::withOptions(['verify' => false])->post($url);
 
