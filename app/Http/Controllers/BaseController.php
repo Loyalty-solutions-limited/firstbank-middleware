@@ -62,7 +62,7 @@ class BaseController extends Controller
         $headers = [
         'Accept' => 'application/xml',
         'Api-Key' => config("externalservices.BAP_API_KEY"),
-        'Content-Type' => 'text/xml; charset=UTF8',
+        'Content-Type' => 'application/xml; charset=UTF8',
         'Cookie' => 'ARRAffinity=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33; ARRAffinitySameSite=8cb9eb8a9c8e49bb32964ef5e087477636164e3b1bd119e62b62b2d516d04b33'
         ];
 

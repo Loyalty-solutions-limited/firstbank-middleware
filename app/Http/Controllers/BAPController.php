@@ -45,21 +45,28 @@ class BAPController extends BaseController
     {
         $trans_ref = random_int(999999, 1000000000);
         $payload = "<BillPaymentAdvice>
-            <Amount>$request->amount</Amount>
-            <PaymentCode>$request->payment_code</PaymentCode>
-            <RequestReference>$trans_ref</RequestReference>
-            <SuspenseAccount />
-            <TerminalId>3FCL0001</TerminalId>
-            <CustomerAccountNumber>$request->customer_account_number</CustomerAccountNumber>
-            <CustomerId>$request->customer_id</CustomerId>
-            <CustomerMobile>$request->customer_mobile</CustomerMobile>
-            <CustomerEmail>a@b.com</CustomerEmail>
-            <Narration>Trans_ref$trans_ref/$request->customer_account_number/$request->customer_mobile</Narration>
-            </BillPaymentAdvice>";
+                        <Amount>$request->amount</Amount>
+                        <PaymentCode>$request->payment_code</PaymentCode>
+                        <RequestReference>$trans_ref</RequestReference>
+                        <SuspenseAccount />
+                        <TerminalId>3FCL0001</TerminalId>
+                        <CustomerAccountNumber>$request->customer_account_number</CustomerAccountNumber>
+                        <CustomerId>$request->customer_id</CustomerId>
+                        <CustomerMobile>$request->customer_mobile</CustomerMobile>
+                        <CustomerEmail>a@b.com</CustomerEmail>
+                        <Narration>Trans_ref$trans_ref/$request->customer_account_number/$request->customer_mobile</Narration>
+                        <Payloads>
+                            <Payload>
+                                <name>channel_phone_number</name>
+                                <value>$request->customer_mobile</value>
+                                <label>Phone Number</label>
+                            </Payload>
+                        </Payloads>
+                    </BillPaymentAdvice>";
             // dd($payload);
 
-            return $this->postDataGuzzle($payload, "SendBillPaymentAdvice");
-            // return $this->postData($payload, "SendBillPaymentAdvice");
+            //return $this->postDataGuzzle($payload, "SendBillPaymentAdvice");
+             return $this->postData($payload, "SendBillPaymentAdvice");
 
     }
 }
