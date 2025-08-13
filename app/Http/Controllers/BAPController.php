@@ -56,8 +56,8 @@ class BAPController extends BaseController
                         <CustomerEmail>a@b.com</CustomerEmail>
                         <Narration>Trans_ref$trans_ref/$request->customer_account_number/$request->customer_mobile</Narration>
                     </BillPaymentAdvice>";
-            // dd($payload);
-
+            return $payload;
+            
             return $this->postDataGuzzle($payload, "SendBillPaymentAdvice");
              //return $this->postData($payload, "SendBillPaymentAdvice");
 
