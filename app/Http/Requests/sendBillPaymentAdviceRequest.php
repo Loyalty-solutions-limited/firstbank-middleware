@@ -26,7 +26,7 @@ class sendBillPaymentAdviceRequest extends FormRequest
         return [
             "amount" => "required|string",
             "payment_code" => "required|string",
-            "customer_account_number" => "required|string",
+            //"customer_account_number" => "required|string",
             "customer_mobile" => "required|string",
             "customer_id" => "required|string",
             "cifid" => "required|string"
