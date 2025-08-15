@@ -50,7 +50,7 @@ class BAPController extends BaseController
                         <RequestReference>$trans_ref</RequestReference>
                         <SuspenseAccount />
                         <TerminalId>3FCL0001</TerminalId>
-                        <CustomerAccountNumber>$request->customer_account_number</CustomerAccountNumber>
+                        <CustomerAccountNumber>48934389051401</CustomerAccountNumber>
                         <CustomerId>$request->customer_id</CustomerId>
                         <CustomerMobile>$request->customer_mobile</CustomerMobile>
                         <CustomerEmail>a@b.com</CustomerEmail>
