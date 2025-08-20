@@ -41,7 +41,7 @@ class BAPController extends BaseController
          return $this->postDataGuzzle($payload, "GetBillerPaymentItems");
     }
 
-    public function sendBillPaymentAdvice(sendBillPaymentAdviceRequest $request)// live acc
+    public function sendBillPaymentAdvice(sendBillPaymentAdviceRequest $request)
     {
         $trans_ref = random_int(999999, 1000000000);
         $payload = "<BillPaymentAdvice>
@@ -60,5 +60,15 @@ class BAPController extends BaseController
                return $this->postDataGuzzle($payload, "SendBillPaymentAdvice");
              //return $this->postData($payload, "SendBillPaymentAdvice");
 
+    }
+
+    public function QueryTransaction(Request $request)
+    {
+               $payload = "<QueryTransaction>
+                         <RequestReference>$request->transaction_ref</RequestReference>
+                   </QueryTransaction>";
+            
+               return $this->postDataGuzzle($payload, "QueryTransaction");
+             //return $this->postData($payload, "SendBillPaymentAdvice");
     }
 }

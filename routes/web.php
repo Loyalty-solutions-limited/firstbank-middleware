@@ -77,6 +77,7 @@ Route::post('/getbiller_categories', [BAPController::class, 'getBillerCategory']
 Route::post('/getbillers', [BAPController::class, 'getBillers']);
 Route::post('/get_biller_items', [BAPController::class, 'getBillerItems']);
 Route::post('/sendbill_payment_advice', [BAPController::class, 'sendBillPaymentAdvice']);
+Route::post('/query_transaction', [BAPController::class, 'QueryTransaction']);
 Route::post('/log-emails', [LogEmailsController::class, 'log']);
 Route::post('/send-email-API', [LogEmailsController::class, 'sendMail']);
 Route::post('/send-email-guzzle', [LogEmailsController::class, 'sendMailGuzzle']);
