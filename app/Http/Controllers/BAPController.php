@@ -41,7 +41,7 @@ class BAPController extends BaseController
          return $this->postDataGuzzle($payload, "GetBillerPaymentItems");
     }
 
-    public function sendBillPaymentAdvice(sendBillPaymentAdviceRequest $request)//48934389051401 live acc
+    public function sendBillPaymentAdvice(sendBillPaymentAdviceRequest $request)// live acc
     {
         $trans_ref = random_int(999999, 1000000000);
         $payload = "<BillPaymentAdvice>
@@ -50,7 +50,7 @@ class BAPController extends BaseController
                         <RequestReference>$trans_ref</RequestReference>
                         <SuspenseAccount />
                         <TerminalId>3FCL0001</TerminalId>
-                        <CustomerAccountNumber>3134365078</CustomerAccountNumber>
+                        <CustomerAccountNumber>$request->customer_account_number</CustomerAccountNumber>
                         <CustomerId>$request->customer_id</CustomerId>
                         <CustomerMobile>$request->customer_mobile</CustomerMobile>
                         <CustomerEmail>a@b.com</CustomerEmail>
