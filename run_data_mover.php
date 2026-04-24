@@ -1,20 +1,5 @@
 <?php
 
-/**
- * run_data_mover.php
- *
- * Persistent daemon. Runs forever, draining qualified_transactions
- * and pushing batches to the PERX staging endpoint.
- *
- * Status values:
- *   0 = pending       (waiting to be processed)
- *   1 = processing    (claimed by this daemon, currently being sent)
- *   2 = done          (successfully sent and confirmed, never touch again)
- *
- * To test manually:  php run_data_mover.php
- * To run properly:   managed by Supervisor / systemd
- */
-
 require __DIR__ . '/vendor/autoload.php';
 
 $app = require_once __DIR__ . '/bootstrap/app.php';
@@ -25,55 +10,20 @@ $kernel->bootstrap();
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-// ─── Config ───────────────────────────────────────────────────────────────────
-define('PERX_ENDPOINT',       env('PERX_ENDPOINT', 'https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/staging/stage_data.php'));
-define('BATCH_SIZE',          5000);
-define('SLEEP_WHEN_IDLE',     5);    // seconds to wait when no pending rows
-define('SLEEP_ON_ERROR',      10);   // seconds to wait after a failed push
-define('STUCK_LOOP_MINUTES',  3);    // rows stuck at status=1 for 3+ minutes during running = reset
-define('STUCK_HOURS_HARD',    24);   // rows stuck at status=1 for 24+ hours = force reset regardless
-// ─────────────────────────────────────────────────────────────────────────────
+define('PERX_ENDPOINT', env('PERX_ENDPOINT', 'https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/staging/stage_data.php'));
 
-function pushToPERX(string $url, array $payload): array
-{
-    $json           = json_encode($payload);
-    $compressedJson = gzencode($json, 9);
+define('CLAIM_SIZE', 5000);          // number of source rows to claim at once
+define('SEND_CHUNK_SIZE', 1000);     // number of unique transaction refs to send per request
+define('SLEEP_WHEN_IDLE', 5);
+define('SLEEP_ON_ERROR', 10);
 
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $compressedJson,
-        CURLOPT_HTTPHEADER     => [
-            'Content-Type: application/json',
-            'Content-Encoding: gzip',
-            'Content-Length: ' . strlen($compressedJson),
-        ],
-        CURLOPT_TIMEOUT        => 120,
-        CURLOPT_CONNECTTIMEOUT => 15,
-    ]);
+define('CHUNK_MAX_RETRIES', 3);
+define('CHUNK_RETRY_BASE_SLEEP', 3);
 
-    $response = curl_exec($ch);
-    $error    = curl_error($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+define('CONNECT_TIMEOUT', 20);
+define('REQUEST_TIMEOUT', 180);
 
-    if ($error) {
-        throw new \RuntimeException("cURL error: $error");
-    }
-
-    if ($httpCode !== 200) {
-        throw new \RuntimeException("HTTP $httpCode from PERX endpoint");
-    }
-
-    $decoded = json_decode($response, true);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new \RuntimeException("Invalid JSON response: $response");
-    }
-
-    return $decoded;
-}
+define('LOCK_FILE', '/tmp/firstbankmiddleware_data_mover.lock');
 
 function logLine(string $message): void
 {
@@ -82,145 +32,301 @@ function logLine(string $message): void
     Log::info("[DataMover] $message");
 }
 
-// ─── STARTUP RESETS ───────────────────────────────────────────────────────────
-// Runs ONCE when the script boots. Since the script is just starting,
-// nothing is currently in flight. Any status=1 row is abandoned from
-// a previous run and must be retried.
-// ─────────────────────────────────────────────────────────────────────────────
+function acquireSingleInstanceLock()
+{
+    $fp = fopen(LOCK_FILE, 'c');
 
-// Reset ALL status=1 rows unconditionally on startup
-$startupStuck = DB::table('qualified_transactions')
-    ->where('status', 1)
-    ->count();
+    if (!$fp) {
+        throw new RuntimeException('Could not open lock file: ' . LOCK_FILE);
+    }
 
-if ($startupStuck > 0) {
-    DB::table('qualified_transactions')
-        ->where('status', 1)
-        ->update(['status' => 0]);
-    logLine("STARTUP — reset $startupStuck abandoned rows back to pending.");
-} else {
-    logLine("STARTUP — no abandoned rows found. Clean start.");
+    if (!flock($fp, LOCK_EX | LOCK_NB)) {
+        logLine('Another worker instance is already running. Exiting.');
+        exit(0);
+    }
+
+    fwrite($fp, getmypid() . PHP_EOL);
+    fflush($fp);
+
+    return $fp;
 }
 
-logLine("Data mover started. Batch size: " . BATCH_SIZE);
+function pushToPERX(string $url, array $payload): array
+{
+    $json = json_encode($payload);
 
-// ─── Main loop ────────────────────────────────────────────────────────────────
-$loopCounter = 0; // used to run the 24hr hard reset check periodically
+    if ($json === false) {
+        throw new RuntimeException('JSON encode failed: ' . json_last_error_msg());
+    }
 
-while (true) {
+    $compressedJson = gzencode($json, 9);
 
-    try {
+    if ($compressedJson === false) {
+        throw new RuntimeException('gzip compression failed');
+    }
 
-        $loopCounter++;
+    $ch = curl_init($url);
 
-        // ── Hard reset: every 100 loops check for rows stuck over 24 hours ───
-        // This is the safety net for rows that somehow slipped through
-        // the startup reset or got stuck during a very long running push.
-        // Runs every 100 loops (~every 8-10 minutes) to avoid hammering the DB.
-        if ($loopCounter % 100 === 0) {
-            $hardStuck = DB::table('qualified_transactions')
-                ->where('status', 1)
-                ->where('updated_at', '<', now()->subHours(STUCK_HOURS_HARD))
-                ->count();
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $compressedJson,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Content-Encoding: gzip',
+            'Content-Length: ' . strlen($compressedJson),
+        ],
+        CURLOPT_TIMEOUT => REQUEST_TIMEOUT,
+        CURLOPT_CONNECTTIMEOUT => CONNECT_TIMEOUT,
+    ]);
 
-            if ($hardStuck > 0) {
-                DB::table('qualified_transactions')
-                    ->where('status', 1)
-                    ->where('updated_at', '<', now()->subHours(STUCK_HOURS_HARD))
-                    ->update(['status' => 0]);
-                logLine("HARD RESET — reset $hardStuck rows stuck for over 24 hours back to pending.");
+    $response = curl_exec($ch);
+    $error = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    curl_close($ch);
+
+    if ($error) {
+        throw new RuntimeException("cURL error: $error");
+    }
+
+    if ($httpCode !== 200) {
+        throw new RuntimeException("HTTP $httpCode from PERX endpoint. Response: $response");
+    }
+
+    $decoded = json_decode($response, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new RuntimeException("Invalid JSON response: $response");
+    }
+
+    return $decoded;
+}
+
+function sendChunkWithRetry(array $chunk, int $chunkIndex, int $totalChunks): array
+{
+    $attempt = 0;
+    $lastError = null;
+
+    while ($attempt < CHUNK_MAX_RETRIES) {
+        $attempt++;
+
+        try {
+            logLine("Sending chunk {$chunkIndex}/{$totalChunks}, attempt {$attempt}, size " . count($chunk) . "...");
+            $resp = pushToPERX(PERX_ENDPOINT, $chunk);
+
+            if (($resp['status'] ?? '') !== 'ok') {
+                throw new RuntimeException("Unexpected endpoint response: " . json_encode($resp));
+            }
+
+            return $resp;
+        } catch (\Throwable $e) {
+            $lastError = $e;
+            logLine("Chunk {$chunkIndex}/{$totalChunks} failed on attempt {$attempt}: " . $e->getMessage());
+
+            if ($attempt < CHUNK_MAX_RETRIES) {
+                sleep(CHUNK_RETRY_BASE_SLEEP * $attempt);
             }
         }
+    }
 
-        // ── Step 1: Atomically claim a batch of status=0 rows ────────────────
-        // Update FIRST before fetching — prevents two instances
-        // from ever claiming the same rows simultaneously.
-        $claimed = DB::table('qualified_transactions')
+    throw new RuntimeException(
+        "Chunk {$chunkIndex}/{$totalChunks} failed after " . CHUNK_MAX_RETRIES .
+        " attempts. Last error: " . ($lastError ? $lastError->getMessage() : 'unknown')
+    );
+}
+
+function resetAllProcessingRowsOnStartup(): int
+{
+    return DB::table('qualified_transactions')
+        ->where('status', 1)
+        ->update(['status' => 0]);
+}
+
+function resetClaimedRowsByIds(array $ids): int
+{
+    if (empty($ids)) {
+        return 0;
+    }
+
+    return DB::table('qualified_transactions')
+        ->whereIn('id', $ids)
+        ->where('status', 1)
+        ->update(['status' => 0]);
+}
+
+function markRefsDone(array $refs): int
+{
+    if (empty($refs)) {
+        return 0;
+    }
+
+    // mark all duplicates of successful refs as done too
+    return DB::table('qualified_transactions')
+        ->whereIn('transaction_reference', $refs)
+        ->whereIn('status', [0, 1])
+        ->update(['status' => 2]);
+}
+
+// enforce single worker
+$lockHandle = acquireSingleInstanceLock();
+
+// startup recovery
+$startupReset = resetAllProcessingRowsOnStartup();
+logLine("STARTUP — reset {$startupReset} rows from processing back to pending.");
+logLine("Data mover started. Claim size: " . CLAIM_SIZE . ", send chunk size: " . SEND_CHUNK_SIZE);
+
+while (true) {
+    $claimedIds = [];
+
+    try {
+        // Step 1: select candidate pending rows
+        $candidates = DB::table('qualified_transactions')
+            ->select([
+                'id',
+                'member_reference',
+                'account_number',
+                'transaction_date',
+                'transaction_type',
+                'channel',
+                'amount',
+                'branch_code',
+                'transaction_reference',
+                'product_code',
+                'quantity',
+            ])
             ->where('status', 0)
-            ->limit(BATCH_SIZE)
-            ->update(['status' => 1]);
+            ->whereNotNull('transaction_reference')
+            ->where('transaction_reference', '!=', '')
+            ->orderBy('id')
+            ->limit(CLAIM_SIZE)
+            ->get();
 
-        if ($claimed === 0) {
+        if ($candidates->isEmpty()) {
             logLine("No pending rows. Sleeping " . SLEEP_WHEN_IDLE . "s...");
             sleep(SLEEP_WHEN_IDLE);
             continue;
         }
 
-        // ── Step 2: Fetch exactly the rows we just claimed ───────────────────
-        $rows = DB::table('qualified_transactions')
-            ->where('status', 1)
-            ->limit(BATCH_SIZE)
-            ->get()
-            ->unique('transaction_reference');
+        $candidateIds = $candidates->pluck('id')->toArray();
 
-        if ($rows->isEmpty()) {
-            logLine("Claimed rows but fetch returned empty. Sleeping...");
+        // Step 2: claim only those exact IDs
+        $claimed = DB::table('qualified_transactions')
+            ->whereIn('id', $candidateIds)
+            ->where('status', 0)
+            ->update(['status' => 1]);
+
+        if ($claimed === 0) {
+            logLine("Could not claim rows. Sleeping...");
             sleep(SLEEP_WHEN_IDLE);
             continue;
         }
 
-        $ids = $rows->pluck('id')->toArray();
+        // Step 3: re-fetch only the exact rows we claimed
+        $rows = DB::table('qualified_transactions')
+            ->select([
+                'id',
+                'member_reference',
+                'account_number',
+                'transaction_date',
+                'transaction_type',
+                'channel',
+                'amount',
+                'branch_code',
+                'transaction_reference',
+                'product_code',
+                'quantity',
+            ])
+            ->whereIn('id', $candidateIds)
+            ->where('status', 1)
+            ->orderBy('id')
+            ->get();
 
-        // ── Step 3: Build payload ─────────────────────────────────────────────
-        $payload = $rows->map(fn($t) => [
-            'Membership_ID'            => $t->member_reference,
-            'Acid'                     => $t->account_number,
-            'Transaction_Date'         => $t->transaction_date,
-            'Transaction_Type_code'    => $t->transaction_type,
-            'Transaction_channel_code' => $t->channel,
-            'Transaction_amount'       => $t->amount,
-            'Branch_code'              => $t->branch_code,
-            'Transaction_ID'           => $t->transaction_reference,
-            'Product_Code'             => $t->product_code,
-            'Product_Quantity'         => $t->quantity,
-            'id'                       => $t->id,
-        ])->values()->toArray();
-
-        logLine("Pushing " . count($ids) . " records to PERX...");
-
-        // ── Step 4: Push to staging endpoint ─────────────────────────────────
-        $resp = pushToPERX(PERX_ENDPOINT, $payload);
-
-        if (($resp['status'] ?? '') === 'ok') {
-
-            // ✅ Confirmed — mark as fully done, never touched again
-            DB::table('qualified_transactions')
-                ->whereIn('id', $ids)
-                ->update(['status' => 2]);
-
-            logLine("SUCCESS — " . count($ids) . " sent and marked done. Inserted: " . ($resp['inserted'] ?? 'unknown'));
-
-        } else {
-
-            // Endpoint responded but not with ok — reset this batch to retry
-            DB::table('qualified_transactions')
-                ->whereIn('id', $ids)
-                ->update(['status' => 0]);
-
-            logLine("WARNING — unexpected response, batch reset to pending: " . json_encode($resp));
-            sleep(SLEEP_ON_ERROR);
+        if ($rows->isEmpty()) {
+            logLine("Claimed rows but re-fetch returned empty. Sleeping...");
+            sleep(SLEEP_WHEN_IDLE);
+            continue;
         }
 
-    } catch (\Exception $e) {
+        $claimedIds = $rows->pluck('id')->toArray();
 
+        // Step 4: de-duplicate by transaction_reference
+        $uniqueMap = [];
+
+        foreach ($rows as $row) {
+            $ref = trim((string) $row->transaction_reference);
+
+            if ($ref === '') {
+                continue;
+            }
+
+            if (!isset($uniqueMap[$ref])) {
+                $uniqueMap[$ref] = [
+                    'Membership_ID'            => $row->member_reference,
+                    'Acid'                     => $row->account_number,
+                    'Transaction_Date'         => $row->transaction_date,
+                    'Transaction_Type_code'    => $row->transaction_type,
+                    'Transaction_channel_code' => $row->channel,
+                    'Transaction_amount'       => $row->amount,
+                    'Branch_code'              => $row->branch_code,
+                    'Transaction_ID'           => $row->transaction_reference,
+                    'Product_Code'             => $row->product_code,
+                    'Product_Quantity'         => $row->quantity,
+                ];
+            }
+        }
+
+        $uniquePayload = array_values($uniqueMap);
+
+        if (empty($uniquePayload)) {
+            $reset = resetClaimedRowsByIds($claimedIds);
+            logLine("No valid transaction references found in claimed batch. Reset {$reset} rows.");
+            sleep(SLEEP_WHEN_IDLE);
+            continue;
+        }
+
+        logLine(
+            "Claimed " . count($claimedIds) .
+            " source rows; " . count($uniquePayload) .
+            " unique transaction references ready to send."
+        );
+
+        // Step 5: send in chunks and mark successful refs as done
+        $chunks = array_chunk($uniquePayload, SEND_CHUNK_SIZE);
+        $totalChunks = count($chunks);
+
+        foreach ($chunks as $index => $chunk) {
+            $chunkIndex = $index + 1;
+
+            $chunkRefs = array_values(array_filter(array_map(
+                fn($item) => $item['Transaction_ID'] ?? null,
+                $chunk
+            )));
+
+            $resp = sendChunkWithRetry($chunk, $chunkIndex, $totalChunks);
+
+            $doneCount = markRefsDone($chunkRefs);
+
+            logLine(
+                "Chunk {$chunkIndex}/{$totalChunks} OK — endpoint inserted " .
+                ($resp['inserted'] ?? 'unknown') .
+                ", marked {$doneCount} source rows as done."
+            );
+        }
+
+        logLine("BATCH COMPLETE — claimed " . count($claimedIds) . " source rows successfully.");
+
+    } catch (\Throwable $e) {
         logLine("ERROR — " . $e->getMessage());
 
-        // Reset only the rows THIS iteration claimed
-        // Never reset the entire table — only what we own right now
         try {
-            if (!empty($ids)) {
-                DB::table('qualified_transactions')
-                    ->whereIn('id', $ids)
-                    ->where('status', 1)
-                    ->update(['status' => 0]);
-                logLine("ERROR RECOVERY — reset " . count($ids) . " rows from this batch back to pending.");
+            $reset = resetClaimedRowsByIds($claimedIds);
+            if ($reset > 0) {
+                logLine("ERROR RECOVERY — reset {$reset} claimed rows back to pending.");
             }
-        } catch (\Exception $dbError) {
-            logLine("CRITICAL — could not reset rows, DB error: " . $dbError->getMessage());
+        } catch (\Throwable $dbError) {
+            logLine("CRITICAL — failed to reset claimed rows: " . $dbError->getMessage());
         }
-
-        // Clear ids so the next loop does not accidentally reference this batch
-        $ids = [];
 
         sleep(SLEEP_ON_ERROR);
     }
