@@ -184,7 +184,7 @@ function col(object $row, string $name): mixed
 // enforce single worker
 $lockHandle = acquireSingleInstanceLock();
 
-$isOracle = DB::connection()->getDriverName() === 'oci8';
+$isOracle = in_array(DB::connection()->getDriverName(), ['oci8', 'oracle']);
 logLine("DB driver: " . DB::connection()->getDriverName());
 
 // Startup schema diagnostic — logs every column name, PHP type, and sample value
