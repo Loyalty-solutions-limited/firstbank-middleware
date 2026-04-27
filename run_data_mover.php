@@ -10,10 +10,10 @@ $kernel->bootstrap();
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-define('PERX_ENDPOINT', env('PERX_ENDPOINT', 'https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/staging/stage_data.php'));
+define('PERX_ENDPOINT', 'https://fbnperxlive-amfgcwc2d9g0e9av.francecentral-01.azurewebsites.net/staging/stage_data.php');
 
-define('CLAIM_SIZE', 5000);          // number of source rows to claim at once
-define('SEND_CHUNK_SIZE', 1000);     // number of unique transaction refs to send per request
+define('CLAIM_SIZE', 5000);
+define('SEND_CHUNK_SIZE', 100);
 define('SLEEP_WHEN_IDLE', 5);
 define('SLEEP_ON_ERROR', 10);
 
@@ -24,6 +24,9 @@ define('CONNECT_TIMEOUT', 20);
 define('REQUEST_TIMEOUT', 180);
 
 define('LOCK_FILE', '/tmp/firstbankmiddleware_data_mover.lock');
+
+// Oracle allows a maximum of 1000 expressions in an IN list (ORA-01795).
+define('ORACLE_IN_LIMIT', 999);
 
 function logLine(string $message): void
 {
@@ -65,6 +68,8 @@ function pushToPERX(string $url, array $payload): array
         throw new RuntimeException('gzip compression failed');
     }
 
+    logLine("Payload sizes — JSON: " . strlen($json) . " bytes, Gzip: " . strlen($compressedJson) . " bytes");
+
     $ch = curl_init($url);
 
     curl_setopt_array($ch, [
@@ -75,6 +80,7 @@ function pushToPERX(string $url, array $payload): array
             'Content-Type: application/json',
             'Content-Encoding: gzip',
             'Content-Length: ' . strlen($compressedJson),
+            'Expect:',
         ],
         CURLOPT_TIMEOUT => REQUEST_TIMEOUT,
         CURLOPT_CONNECTTIMEOUT => CONNECT_TIMEOUT,
@@ -143,33 +149,65 @@ function resetAllProcessingRowsOnStartup(): int
         ->update(['status' => 0]);
 }
 
-function resetClaimedRowsByIds(array $ids): int
-{
-    if (empty($ids)) {
-        return 0;
-    }
-
-    return DB::table('qualified_transactions')
-        ->whereIn('id', $ids)
-        ->where('status', 1)
-        ->update(['status' => 0]);
-}
-
+/**
+ * Mark all source rows for the given transaction references as done (status=2).
+ * Chunked to stay within Oracle's 999-item IN clause limit.
+ */
 function markRefsDone(array $refs): int
 {
     if (empty($refs)) {
         return 0;
     }
 
-    // mark all duplicates of successful refs as done too
-    return DB::table('qualified_transactions')
-        ->whereIn('transaction_reference', $refs)
-        ->whereIn('status', [0, 1])
-        ->update(['status' => 2]);
+    $done = 0;
+
+    foreach (array_chunk($refs, ORACLE_IN_LIMIT) as $chunk) {
+        $done += DB::table('qualified_transactions')
+            ->whereIn('transaction_reference', $chunk)
+            ->whereIn('status', [0, 1])
+            ->update(['status' => 2]);
+    }
+
+    return $done;
+}
+
+/**
+ * Extract a column value from a stdClass row in a case-insensitive way.
+ * Oracle returns column names in UPPERCASE; MySQL returns them as-is.
+ */
+function col(object $row, string $name): mixed
+{
+    $arr = (array) $row;
+    return $arr[$name] ?? $arr[strtoupper($name)] ?? null;
 }
 
 // enforce single worker
 $lockHandle = acquireSingleInstanceLock();
+
+$isOracle = DB::connection()->getDriverName() === 'oci8';
+logLine("DB driver: " . DB::connection()->getDriverName());
+
+// Startup schema diagnostic — logs every column name, PHP type, and sample value
+// from the first row. Use this to confirm column names and types.
+$sampleRows = $isOracle
+    ? DB::select('SELECT * FROM qualified_transactions WHERE ROWNUM <= 1')
+    : DB::select('SELECT * FROM qualified_transactions LIMIT 1');
+if (!empty($sampleRows)) {
+    $arr = (array) $sampleRows[0];
+    $parts = [];
+    foreach ($arr as $k => $v) {
+        $type = gettype($v);
+        $displayVal = is_null($v)
+            ? 'NULL'
+            : (is_object($v) ? 'OBJ(' . get_class($v) . ')' : substr((string) $v, 0, 25));
+        $parts[] = "{$k}({$type})={$displayVal}";
+    }
+    logLine("SCHEMA — " . implode(' | ', $parts));
+} else {
+    logLine("SCHEMA — table is empty or inaccessible");
+}
+
+logLine("ENDPOINT — " . PERX_ENDPOINT);
 
 // startup recovery
 $startupReset = resetAllProcessingRowsOnStartup();
@@ -177,55 +215,63 @@ logLine("STARTUP — reset {$startupReset} rows from processing back to pending.
 logLine("Data mover started. Claim size: " . CLAIM_SIZE . ", send chunk size: " . SEND_CHUNK_SIZE);
 
 while (true) {
-    $claimedIds = [];
-
     try {
-        // Step 1: select candidate pending rows
-        $candidates = DB::table('qualified_transactions')
-            ->select([
-                'id',
-                'member_reference',
-                'account_number',
-                'transaction_date',
-                'transaction_type',
-                'channel',
-                'amount',
-                'branch_code',
-                'transaction_reference',
-                'product_code',
-                'quantity',
-            ])
-            ->where('status', 0)
-            ->whereNotNull('transaction_reference')
-            ->where('transaction_reference', '!=', '')
-            ->orderBy('id')
-            ->limit(CLAIM_SIZE)
-            ->get();
+        // Step 1: Claim up to CLAIM_SIZE pending rows atomically using Oracle ROWID.
+        //
+        // We use ROWID (Oracle's internal physical row address) instead of the 'id'
+        // column because 'id' was found to be NULL in this Oracle environment — it
+        // exists as a column but was never populated during the data import.
+        // ROWID is always present, unique, and non-null for every row.
+        //
+        // The two-level subquery is required in Oracle: ROWNUM is assigned before
+        // ORDER BY executes, so limiting must happen in an outer query.
+        // Here we don't need a specific ORDER BY — any CLAIM_SIZE pending rows
+        // are fine to claim.
+        if ($isOracle) {
+            $claimed = DB::affectingStatement(
+                "UPDATE qualified_transactions
+                 SET status = 1
+                 WHERE ROWID IN (
+                     SELECT row_id FROM (
+                         SELECT ROWID AS row_id
+                         FROM qualified_transactions
+                         WHERE status = 0
+                         AND transaction_reference IS NOT NULL
+                         AND LENGTH(TRIM(transaction_reference)) > 0
+                     ) WHERE ROWNUM <= " . intval(CLAIM_SIZE) . "
+                 ) AND status = 0"
+            );
+        } else {
+            $claimed = DB::affectingStatement(
+                "UPDATE qualified_transactions
+                 SET status = 1
+                 WHERE id IN (
+                     SELECT id FROM (
+                         SELECT id
+                         FROM qualified_transactions
+                         WHERE status = 0
+                         AND transaction_reference IS NOT NULL
+                         AND TRIM(transaction_reference) != ''
+                         LIMIT " . intval(CLAIM_SIZE) . "
+                     ) AS tmp
+                 ) AND status = 0"
+            );
+        }
 
-        if ($candidates->isEmpty()) {
+        if ($claimed === 0) {
             logLine("No pending rows. Sleeping " . SLEEP_WHEN_IDLE . "s...");
             sleep(SLEEP_WHEN_IDLE);
             continue;
         }
 
-        $candidateIds = $candidates->pluck('id')->toArray();
+        logLine("Claimed {$claimed} rows, re-fetching data...");
 
-        // Step 2: claim only those exact IDs
-        $claimed = DB::table('qualified_transactions')
-            ->whereIn('id', $candidateIds)
-            ->where('status', 0)
-            ->update(['status' => 1]);
-
-        if ($claimed === 0) {
-            logLine("Could not claim rows. Sleeping...");
-            sleep(SLEEP_WHEN_IDLE);
-            continue;
-        }
-
-        // Step 3: re-fetch only the exact rows we claimed
+        // Step 2: Re-fetch the rows we just claimed.
+        // We select by status=1. This is safe because we are the only worker
+        // (enforced by the lock file). No LIMIT here — avoids the yajra/laravel-oci8
+        // ROWNUM wrapper that was causing column values to come back as null.
         $rows = DB::table('qualified_transactions')
             ->select([
-                'id',
                 'member_reference',
                 'account_number',
                 'transaction_date',
@@ -237,24 +283,20 @@ while (true) {
                 'product_code',
                 'quantity',
             ])
-            ->whereIn('id', $candidateIds)
             ->where('status', 1)
-            ->orderBy('id')
             ->get();
 
         if ($rows->isEmpty()) {
-            logLine("Claimed rows but re-fetch returned empty. Sleeping...");
+            logLine("Re-fetch returned empty. Sleeping...");
             sleep(SLEEP_WHEN_IDLE);
             continue;
         }
 
-        $claimedIds = $rows->pluck('id')->toArray();
-
-        // Step 4: de-duplicate by transaction_reference
+        // Step 3: De-duplicate by transaction_reference.
         $uniqueMap = [];
 
         foreach ($rows as $row) {
-            $ref = trim((string) $row->transaction_reference);
+            $ref = trim((string) col($row, 'transaction_reference'));
 
             if ($ref === '') {
                 continue;
@@ -262,16 +304,16 @@ while (true) {
 
             if (!isset($uniqueMap[$ref])) {
                 $uniqueMap[$ref] = [
-                    'Membership_ID'            => $row->member_reference,
-                    'Acid'                     => $row->account_number,
-                    'Transaction_Date'         => $row->transaction_date,
-                    'Transaction_Type_code'    => $row->transaction_type,
-                    'Transaction_channel_code' => $row->channel,
-                    'Transaction_amount'       => $row->amount,
-                    'Branch_code'              => $row->branch_code,
-                    'Transaction_ID'           => $row->transaction_reference,
-                    'Product_Code'             => $row->product_code,
-                    'Product_Quantity'         => $row->quantity,
+                    'Membership_ID'            => col($row, 'member_reference'),
+                    'Acid'                     => col($row, 'account_number'),
+                    'Transaction_Date'         => col($row, 'transaction_date'),
+                    'Transaction_Type_code'    => col($row, 'transaction_type'),
+                    'Transaction_channel_code' => col($row, 'channel'),
+                    'Transaction_amount'       => col($row, 'amount'),
+                    'Branch_code'              => col($row, 'branch_code'),
+                    'Transaction_ID'           => $ref,
+                    'Product_Code'             => col($row, 'product_code'),
+                    'Product_Quantity'         => col($row, 'quantity'),
                 ];
             }
         }
@@ -279,19 +321,18 @@ while (true) {
         $uniquePayload = array_values($uniqueMap);
 
         if (empty($uniquePayload)) {
-            $reset = resetClaimedRowsByIds($claimedIds);
+            $reset = DB::table('qualified_transactions')->where('status', 1)->update(['status' => 0]);
             logLine("No valid transaction references found in claimed batch. Reset {$reset} rows.");
             sleep(SLEEP_WHEN_IDLE);
             continue;
         }
 
         logLine(
-            "Claimed " . count($claimedIds) .
-            " source rows; " . count($uniquePayload) .
+            "Claimed {$claimed} source rows; " . count($uniquePayload) .
             " unique transaction references ready to send."
         );
 
-        // Step 5: send in chunks and mark successful refs as done
+        // Step 4: Send in chunks and mark successful refs as done.
         $chunks = array_chunk($uniquePayload, SEND_CHUNK_SIZE);
         $totalChunks = count($chunks);
 
@@ -314,13 +355,16 @@ while (true) {
             );
         }
 
-        logLine("BATCH COMPLETE — claimed " . count($claimedIds) . " source rows successfully.");
+        logLine("BATCH COMPLETE — claimed {$claimed} source rows successfully.");
 
     } catch (\Throwable $e) {
         logLine("ERROR — " . $e->getMessage());
 
         try {
-            $reset = resetClaimedRowsByIds($claimedIds);
+            $reset = DB::table('qualified_transactions')
+                ->where('status', 1)
+                ->update(['status' => 0]);
+
             if ($reset > 0) {
                 logLine("ERROR RECOVERY — reset {$reset} claimed rows back to pending.");
             }
